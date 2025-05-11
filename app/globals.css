@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  color: "#1d2228";
+}
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border-left-color: #667c3e;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #667c3e !important;
+  border-color: #667c3e !important;
+  color: #000 !important;
+}
+.ant-checkbox .ant-checkbox-inner {
+  border-color: #667c3e !important;
+}
+.ant-checkbox-wrapper:hover .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #667c3e !important;
+  border-color: #667c3e !important;
+}
+.ant-btn:hover .ant-btn:focus{
+  background-color: #667c3e !important;
+  border-color: #667c3e !important;
+  color: #000 !important;
+}
+.no-scroll{
+  overflow: hidden;
+}
+
+.input {
+  @apply w-full border rounded px-3 py-2 outline-none focus:ring-2 focus:ring-green-400;
+}
