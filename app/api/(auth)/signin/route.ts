@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     const payload = data.access.split(".")[1];
     const decodedPayload = JSON.parse(atob(payload));
     const role = decodedPayload.role;
-   
+
     if (!response.ok) {
       return NextResponse.json(
         {
@@ -36,7 +36,8 @@ export async function POST(req: Request) {
       );
     }
 
-    if (data.access && (role === "service_provider" || role === "admin")) {
+    // if (data.access && (role === "service_provider" || role === "admin")) {
+    if (data.access && role === "admin") {
       (await cookies()).set("accessToken", data.access);
 
       return NextResponse.json(
