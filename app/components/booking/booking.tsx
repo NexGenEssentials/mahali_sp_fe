@@ -287,7 +287,7 @@ function BookingsTable() {
           </span>
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="">
           <Table
             columns={columns}
             dataSource={[...filteredBookings]

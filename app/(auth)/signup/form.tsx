@@ -48,7 +48,7 @@ const SignupForm = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-     
+
       if (!res.ok) {
         notification.error({
           message: data.error,
@@ -58,8 +58,10 @@ const SignupForm = () => {
       } else {
         notification.success({
           message: "Account created",
-          description: "You have created Account",
+          description:
+            "Welcome to Mahali Africa! Your account is under review. We'll notify you once you're approved to offer your services.",
           placement: "topRight",
+          duration: 10,
         });
 
         setTimeout(() => {
