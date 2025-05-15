@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   LockOutlined,
   LoginOutlined,
@@ -29,12 +29,14 @@ const SignupForm = () => {
   const onFinish = async (values: SignupFormValues) => {
     setLoading(true);
     const formData = {
-      full_name: `${values.firstName}`,
-      service: selectedServices,
       email: values.email,
+      full_name: `${values.name}`,
       password: values.password,
       phone: phone,
-      role: "customer",
+      role: "service_provider",
+      company_name: values.name,
+      services: selectedServices.join(", "),
+      country: values.country,
     };
 
     try {
@@ -46,7 +48,7 @@ const SignupForm = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-
+     
       if (!res.ok) {
         notification.error({
           message: data.error,
@@ -61,7 +63,7 @@ const SignupForm = () => {
         });
 
         setTimeout(() => {
-          route.push("/login");
+          route.push("https://mahaliafrica.com/");
         }, 1500);
       }
     } catch (err: any) {
@@ -140,7 +142,6 @@ const SignupForm = () => {
               size="large"
               mode="multiple"
               allowClear
-              placeholder="Select services"
               className="!text-xs"
               options={serviceOptions}
               onChange={(values) => setSelectedServices(values)}
@@ -187,6 +188,29 @@ const SignupForm = () => {
             />
           </Form.Item>
         </div>
+
+        <Form.Item
+          label="Country Name"
+          name="country"
+          className=" w-full sm:w-1/2 !text-primaryGreen"
+          rules={[
+            {
+              required: true,
+              message: "Please input your company name!",
+            },
+          ]}
+        >
+          <Input
+            type="text"
+            allowClear
+            placeholder="Enter Country Name"
+            prefix={
+              <UserOutlined className="site-form-item-icon pl-1 pr-2 text-textDefaultGreen" />
+            }
+            className=" hover:!border hover:!border-primaryGreen !text-xs !py-2"
+          />
+        </Form.Item>
+
         {/* password */}
         <div className="w-full flex flex-row items-center sm:gap-4  max-sm:flex-wrap ">
           <Form.Item
@@ -232,6 +256,7 @@ const SignupForm = () => {
           </Form.Item>
         </div>
       </div>
+
       <div className="mt-6 flex justify-between items-center flex-wrap gap-4 ">
         <div className="flex gap-2">
           <Checkbox

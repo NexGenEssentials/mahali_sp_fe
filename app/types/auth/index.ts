@@ -1,9 +1,9 @@
 export interface SignupFormValues {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   phoneNumber: string;
+  country: string;
 }
 
 export type UserProfile = {

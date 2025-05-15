@@ -4,7 +4,16 @@ const base_url = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
 export async function POST(req: Request) {
   try {
-    const { full_name, phone, email, password, role } = await req.json();
+    const {
+      full_name,
+      phone,
+      email,
+      password,
+      role,
+      company_name,
+      services,
+      country,
+    } = await req.json();
     if (!full_name || !email || !password || !phone || !role) {
       return NextResponse.json(
         { error: "All fields are required" },
@@ -17,11 +26,20 @@ export async function POST(req: Request) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ full_name, phone, email, password, role }),
+      body: JSON.stringify({
+        full_name,
+        phone,
+        email,
+        password,
+        role,
+        company_name,
+        services,
+        country,
+      }),
     });
-    
+
     const data = await response.json();
-    
+
     if (!response.ok) {
       return NextResponse.json(
         {
