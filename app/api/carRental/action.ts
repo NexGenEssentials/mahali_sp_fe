@@ -11,7 +11,13 @@ const accessToken = cookies().get("accessToken")?.value;
 
 export const CreateCar = async (
   carDetails: CarDetails
-): Promise<{ success: boolean }> => {
+): Promise<{
+  status: string;
+  message: string;
+  data: {
+    id:number;
+  };
+}> => {
   try {
     const response = await fetch(`${base_url}/cars/`, {
       method: "POST",
@@ -23,6 +29,56 @@ export const CreateCar = async (
     });
 
     const data = await response.json();
+    if (!response.ok) {
+      return data
+    }
+
+    return data
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const CreateCarImages = async (
+  carImages: FormData,
+  carId: number
+): Promise<{ success: boolean }> => {
+  try {
+    const response = await fetch(`${base_url}/cars/${carId}/images/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: carImages,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
+};
+
+export const CreateCarFeatures = async (
+  carDetails: number[],
+  carId: number
+): Promise<{ success: boolean }> => {
+  try {
+    const response = await fetch(`${base_url}/cars/${carId}/add-features/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ feature_ids: carDetails }),
+    });
+
+    const data = await response.json();
+    
     if (!response.ok) {
       return {
         success: false,
@@ -36,6 +92,31 @@ export const CreateCar = async (
     return {
       success: false,
     };
+  }
+};
+
+export const CreateNewFeature = async (
+  name: string
+): Promise<{ id: number; name: string }> => {
+  try {
+    const response = await fetch(`${base_url}/cars/features/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ name: name }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    console.log("Something went wrong", { error });
+    throw error;
   }
 };
 

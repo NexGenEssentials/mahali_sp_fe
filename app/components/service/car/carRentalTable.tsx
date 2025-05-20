@@ -85,6 +85,9 @@ const CarRentalTable: React.FC<CarRentalTableProps> = ({
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Vehicle
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -112,6 +115,9 @@ const CarRentalTable: React.FC<CarRentalTableProps> = ({
                   key={car.id}
                   className="hover:bg-gray-50 transition-colors duration-150"
                 >
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900">{car.id}</div>
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       {car.first_image ? (

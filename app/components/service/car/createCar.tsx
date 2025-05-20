@@ -1,13 +1,15 @@
 "use client";
-import { Switch } from "antd";
+import { message, Switch } from "antd";
 import { useState } from "react";
 import { CarImages } from "./addImages";
 import { CreateCar } from "@/app/api/carRental/action";
 import { CarDetails } from "@/app/types/service";
+import { carTypesData } from "@/app/costant";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 export default function AddVehicleForm() {
   const [formData, setFormData] = useState<CarDetails>({
- 
     owner: 0,
     name: "",
     brand: "",
@@ -26,6 +28,8 @@ export default function AddVehicleForm() {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [carId, setCarId] = useState(1);
+  const router = useRouter();
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -51,12 +55,16 @@ export default function AddVehicleForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    console.log("Form Data", formData);
     try {
       const result = await CreateCar(formData);
-      if (result.success) {
-        setCarId(1);
+
+      if (result.status === "success") {
+        setCarId(result.data.id);
         setStep(2);
+        message.success("Car created successfully");
+      }
+      if (!result.status) {
+        message.error("Failed to create car check the details");
       }
     } catch (error) {
       console.error("Error creating car:", error);
@@ -67,6 +75,12 @@ export default function AddVehicleForm() {
 
   return (
     <>
+      <div
+        onClick={() => router.push("/service")}
+        className="border-b-2 w-fit flex items-center gap-1 duration-200  mb-2 text-sm text-slate-400 hover:text-slate-500 font-semibold hover:border-primaryGreen cursor-pointer"
+      >
+        <IoMdArrowRoundBack /> Go Back
+      </div>
       {step === 1 && (
         <form
           onSubmit={handleSubmit}
@@ -139,14 +153,16 @@ export default function AddVehicleForm() {
                   <option value="" disabled>
                     Select a category
                   </option>
-                  <option value="sedan">Sedan</option>
-                  <option value="suv">SUV</option>
-                  <option value="truck">Truck</option>
-                  <option value="van">Van</option>
+
+                  {carTypesData.car_types.map((type, index) => (
+                    <option key={index} value={type.type}>
+                      {type.type}
+                    </option>
+                  ))}
                 </select>
               </div>
 
-              <div>
+              {/* <div>
                 <label
                   htmlFor="owner"
                   className="block text-sm font-medium text-gray-700"
@@ -160,7 +176,7 @@ export default function AddVehicleForm() {
                   onChange={handleChange}
                   className="input"
                 />
-              </div>
+              </div> */}
             </div>
             <>
               <label
@@ -297,7 +313,7 @@ export default function AddVehicleForm() {
                   htmlFor="luggage_capacity"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Luggage Capacity (liters)
+                  Luggage Capacity
                 </label>
                 <input
                   id="luggage_capacity"
@@ -306,7 +322,7 @@ export default function AddVehicleForm() {
                   value={formData.luggage_capacity}
                   onChange={handleChange}
                   className="input"
-                  placeholder="e.g. 500"
+                  placeholder="e.g. 5"
                 />
               </div>
             </div>
@@ -343,14 +359,18 @@ export default function AddVehicleForm() {
                   </span>
                 </div>
 
-                <Switch className=" !bg-primaryGreen" defaultChecked onChange={onChange} />
+                <Switch className="" defaultChecked onChange={onChange} />
               </div>
             </div>
           </div>
 
           {/* Buttons */}
           <div className="flex justify-end gap-2 pt-4">
-            <button type="button" className="px-4 py-2 border rounded-md">
+            <button
+              onClick={() => router.push("/service")}
+              type="button"
+              className="px-4 py-2 border rounded-md"
+            >
               Cancel
             </button>
             <button
