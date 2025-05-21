@@ -39,9 +39,10 @@ export default function Sidebar() {
   const { expanded, setExpanded, activeTab, setActiveTab } = useAppContext();
   const router = useRouter();
   const pathname = usePathname();
+
   useEffect(() => {
     const current = pathname.split("/").pop() || "Analytics";
-    if (current === "dashboard") {
+    if (current.includes("dashboard")) {
       setActiveTab("Analytics");
     } else {
       setActiveTab(current.charAt(0).toUpperCase() + current.slice(1));

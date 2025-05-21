@@ -10,40 +10,46 @@ import CarFeatures from "./carFeatures";
 import { useAppContext } from "@/app/context";
 import { useRouter } from "next/navigation";
 
-export function CarImages({ carId}: { carId: number }) {
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+export function CarImages({ carId }: { carId: number }) {
+  const [imageFile, setImageFile] = useState<File[]>([]);
+  const [imagePreview, setImagePreview] = useState<string[]>([]);
   const [features, setFeatures] = useState<{ id: number; name: string }[]>([]);
   const { setActiveModalId } = useAppContext();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { "image/*": [".jpeg", ".jpg", ".png", ".webp"] },
-    maxFiles: 1,
-    multiple: false,
+
+    multiple: true,
     onDrop: (files) => {
-      const file = files[0];
-      if (file) {
-        setImageFile(file);
-        setImagePreview(URL.createObjectURL(file));
-      }
+      const file = files.map((file) => URL.createObjectURL(file));
+
+      setImageFile((prev) => [...prev, ...files]);
+      setImagePreview((prev) => [...prev, ...file]);
     },
   });
 
-  const removeImage = () => {
-    setImageFile(null);
-    setImagePreview(null);
+  const removeImage = (index: number) => {
+    const updatedImages = [...imageFile];
+    const updatedPreviews = [...imagePreview];
+    updatedImages.splice(index, 1);
+    updatedPreviews.splice(index, 1);
+    setImageFile(updatedImages);
+    setImagePreview(updatedPreviews);
   };
 
   const handleUpload = async () => {
-    if (!imageFile) {
-      message.warning("Please select one image.");
+    if (imageFile.length === 0) {
+      message.warning("Please select at least one image.");
       return;
     }
 
     setLoading(true);
     const formData = new FormData();
-    formData.append("image", imageFile);
+    imageFile.forEach((image, index) => {
+      formData.append("image", image);
+    });
+
     const featuresIds = features.map((feature) => feature.id);
     try {
       if (featuresIds.length > 0) {
@@ -62,7 +68,7 @@ export function CarImages({ carId}: { carId: number }) {
         message.error("Failed to upload image");
       } else {
         message.success("Image uploaded successfully");
-        removeImage();
+
         router.push("/service/car");
       }
     } catch (error) {
@@ -72,7 +78,6 @@ export function CarImages({ carId}: { carId: number }) {
     }
   };
 
- 
   return (
     <div className="space-y-4 max-w-4xl mx-auto p-6">
       <h3 className="text-lg font-semibold border-b pb-1">Car Images</h3>
@@ -92,21 +97,26 @@ export function CarImages({ carId}: { carId: number }) {
         </p>
       </div>
 
-      {imagePreview && (
+      {imagePreview.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div className="relative group aspect-video rounded overflow-hidden">
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="w-full h-full object-cover"
-            />
-            <button
-              onClick={removeImage}
-              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+          {imagePreview.map((preview, index) => (
+            <div
+              key={index}
+              className="relative group aspect-video rounded overflow-hidden"
             >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
+              <img
+                src={preview}
+                alt={`Preview ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+              <button
+                onClick={() => removeImage(index)}
+                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
         </div>
       )}
 

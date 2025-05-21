@@ -3,11 +3,13 @@ import React, { useEffect, useState } from "react";
 import TourPackagesTable from "./tourPackagestable";
 import { SquarePen } from "lucide-react";
 
-import { getAllTours } from "@/app/api/tour/action";
+import { DeleteTourPackage, getAllTours } from "@/app/api/tour/action";
 
 import { useRouter } from "next/navigation";
 import { TourDataType } from "@/app/types/service/tour";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import message from "antd/es/message";
 
 function AdminTourServiceApp() {
   const [loading, setLoading] = useState(true);
@@ -29,8 +31,13 @@ function AdminTourServiceApp() {
       setLoading(false);
     }
   };
-  const handleDelete = (id: number) => {
-    console.log("Delete tour package with id:", id);
+
+  const handleDelete = async (id: number) => {
+    const result = await DeleteTourPackage(id);
+    if (result) {
+      message.success("Tour Package deleted Sucessfully");
+      getAllTourPackages();
+    }
   };
 
   const handleUpdate = (tourPackage: number) => {
@@ -46,12 +53,14 @@ function AdminTourServiceApp() {
       <div className="w-full mx-auto">
         <div className="flex justify-between gap-4 w-full px-4 mb-8">
           <h1 className="text-3xl font-bold text-gray-900 ">Tour Packages</h1>
-          <motion.span
-            whileHover={{ scale: 0.9 }}
-            className="p-3 rounded-md text-white hover:bg-primaryGreen bg-primaryGreen/70 cursor-pointer font-bold flex gap-2"
-          >
-            Create New Tour <SquarePen />
-          </motion.span>
+          <Link href="/service/tour">
+            <motion.span
+              whileHover={{ scale: 0.9 }}
+              className="p-3 rounded-md text-white hover:bg-primaryGreen bg-primaryGreen/70 cursor-pointer font-bold flex gap-2"
+            >
+              Create New Tour <SquarePen />
+            </motion.span>
+          </Link>
         </div>
         <TourPackagesTable
           tour={packageList}

@@ -6,6 +6,7 @@ export type TourPlanType = {
   inclusion: string | null;
   accommodation: string | null;
 };
+
 type RelatedPackage = {
   id: number;
   title: string;
@@ -18,6 +19,7 @@ type RelatedPackage = {
   rating: number;
   main_image: string | null;
 };
+
 export type TourPackageType = {
   id: number;
   title: string;
@@ -45,6 +47,7 @@ export type SingleTourResponseType = {
   message: string;
   data: TourPackageType;
 };
+
 export type countryTourResponseType = {
   success: boolean;
   message: string;
@@ -69,6 +72,7 @@ type WhenToGo = {
   description: string;
   country: number;
 };
+
 export type highlightsData = {
   title: string;
   description: string;
@@ -125,6 +129,7 @@ export type CustomeTourPackageType = {
   accomodation: string;
   package_activities: PackageActivity[];
 };
+
 export type AddActivityTourPackageType = {
   number_of_people: number;
   activities: PackageActivity[];
@@ -151,4 +156,19 @@ export type CustomPackagesResponse = {
   success: true;
   message: string;
   data: CustomPackageData[];
+};
+
+export type CreateTourType = {
+  title: string;
+  description: string;
+  location: string;
+  best_time_to_visit: string;
+  duration_days: number;
+  duration_nights: number;
+  min_people: number;
+  max_people: number;
+  country_id: number;
+  owner?:string;
+  rating?: number;
+  tour_plans?: TourPlanType[];
 };

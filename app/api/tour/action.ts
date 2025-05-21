@@ -5,9 +5,11 @@ import {
   CategoriesResponse,
   CountryResponseType,
   countryTourResponseType,
+  CreateTourType,
   CustomeTourPackageType,
   CustomPackagesResponse,
   SingleTourResponseType,
+  TourPlanType,
   TourResponseType,
 } from "@/app/types/service/tour";
 import { cookies } from "next/headers";
@@ -197,9 +199,8 @@ export const DeleteActivityPackage = async (
 
 export const AddNewActivities = async (
   data: AddActivityTourPackageType,
-  packageId?: number,
+  packageId?: number
 ): Promise<CategoriesResponse> => {
-
   try {
     const response = await fetch(
       `${base_url}/packages/${packageId}/add-activity/`,
@@ -217,6 +218,104 @@ export const AddNewActivities = async (
 
     return result;
   } catch (error) {
+    throw error;
+  }
+};
+
+// create tour flow
+
+export const CreateTourPackage = async (
+  data: CreateTourType
+): Promise<SingleTourResponseType> => {
+  try {
+    const response = await fetch(`${base_url}/tours/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const CreateTourPlans = async (
+  data: TourPlanType,
+  tourId: number
+): Promise<{ success: boolean }> => {
+  try {
+    const response = await fetch(`${base_url}/tours/${tourId}/plans/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
+};
+
+export const CreateTourImages = async (
+  data: FormData,
+  tourId: number
+): Promise<{ success: boolean }> => {
+  try {
+    const response = await fetch(`${base_url}/tours/${tourId}/images/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: data,
+    });
+    const result = await response.json();
+    console.log(result);
+    if (!response.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
+};
+
+// deleting tour package
+
+export const DeleteTourPackage = async (
+  packageId: number
+): Promise<boolean> => {
+  try {
+    const response = await fetch(
+      `${base_url}/tours/${packageId}/`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.log("Something went wrong", { error });
     throw error;
   }
 };
