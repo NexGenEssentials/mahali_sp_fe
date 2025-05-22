@@ -29,6 +29,11 @@ export default function AddVehicleForm() {
   const [step, setStep] = useState(1);
   const [carId, setCarId] = useState(1);
   const router = useRouter();
+    const carBrands = [
+    "Toyota", "Honda", "Ford", "Chevrolet", "Nissan", "Hyundai", "Kia", "Volkswagen",
+    "BMW", "Mercedes-Benz", "Audi", "Lexus", "Mazda", "Subaru", "Jeep", "Dodge",
+    "GMC", "Tesla", "Volvo", "Porsche", "Jaguar", "Land Rover"
+  ];
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -118,21 +123,29 @@ export default function AddVehicleForm() {
               </div>
 
               {/* Brand Input */}
-              <div>
+               <div>
                 <label
                   htmlFor="brand"
                   className="block text-sm font-medium text-gray-700"
                 >
                   Brand
                 </label>
-                <input
+                <select
                   id="brand"
                   name="brand"
-                  placeholder="e.g. Toyota"
                   value={formData.brand}
                   onChange={handleChange}
                   className="input"
-                />
+                >
+                  <option value="" disabled>
+                    Select a brand
+                  </option>
+                  {carBrands.map((brand) => (
+                    <option key={brand} value={brand}>
+                      {brand}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Category Select */}
