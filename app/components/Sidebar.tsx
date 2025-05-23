@@ -79,20 +79,12 @@ const AdminItems = [
 ];
 
 export default function Sidebar() {
-  const { expanded, setExpanded, activeTab, setActiveTab, setUserRole } =
+  const { expanded, setExpanded, activeTab, setActiveTab, userRole } =
     useAppContext();
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<User>({
-    id: 0,
-    full_name: "",
-    email: "",
-    phone: "",
-    role: "",
-  });
 
   useEffect(() => {
-    handleGetuser();
     const current = pathname.split("/").pop() || "Analytics";
     if (current.includes("dashboard")) {
       setActiveTab("Analytics");
@@ -117,17 +109,9 @@ export default function Sidebar() {
     setActiveTab("Analytics");
   };
 
-  const handleGetuser = async () => {
-    const result = await getUserProfile();
-    if (result) {
-      setUserRole(result.role);
-      setUser(result);
-    }
-  };
-
   const SidebarItems =
-    user.role === "admin" ? [...commonItems, ...AdminItems] : commonItems;
-
+    userRole === "admin" ? [...commonItems, ...AdminItems] : commonItems;
+  
   return (
     <div
       className={`h-screen fixed bg-gray-50 shadow-md transition-all duration-300 ${

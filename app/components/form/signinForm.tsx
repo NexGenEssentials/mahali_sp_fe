@@ -5,6 +5,7 @@ import { Button, Form, Input, notification } from "antd";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppContext } from "@/app/context";
+import { decodeJWT } from "@/app/helpers/decodeJWT";
 
 export interface SigninFormData {
   email: string;
@@ -39,7 +40,9 @@ const SignInForm = () => {
           placement: "topRight",
           duration: 1.5,
         });
-        setUserRole(data.role);
+        const user = await decodeJWT(data.user.access);
+        localStorage.setItem("role", user.role);
+        setUserRole(user.role);
 
         setTimeout(() => {
           route.push(callbackUrl);
