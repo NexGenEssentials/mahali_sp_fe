@@ -7,12 +7,13 @@ import { useEffect, useState } from "react";
 import { message } from "antd";
 import { Input, Textarea } from "../../form/inputField";
 import { CountryType } from "@/app/types/service/tour";
-import { CreateTourPackage, getAllCountry } from "@/app/api/tour/action";
+import { CreateTourPackage } from "@/app/api/tour/action";
 import AddTourPlans from "./addTourPlan";
 import { motion } from "framer-motion";
 import AddTourImages from "./addTourImages";
 import { MdNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
+import { getAllCountry } from "@/app/api/destinations/action";
 
 const tourFormSchema = z.object({
   title: z.string().min(1),

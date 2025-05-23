@@ -83,7 +83,7 @@ export type CountryType = {
   highlights: highlightsData[];
   when_to_go: WhenToGo[];
   name: string;
-  image: string | null;
+  image: string;
   description: string | null;
 };
 

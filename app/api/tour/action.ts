@@ -34,23 +34,6 @@ export const getAllTours = async (): Promise<TourResponseType> => {
   }
 };
 
-export const getAllCountry = async (): Promise<CountryResponseType> => {
-  try {
-    const response = await fetch(`${base_url}/countries/`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await response.json();
-
-    return data;
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const getSingleTour = async (
   tourId: string
 ): Promise<SingleTourResponseType> => {
@@ -281,8 +264,7 @@ export const CreateTourImages = async (
       },
       body: data,
     });
-    const result = await response.json();
-    console.log(result);
+ 
     if (!response.ok) {
       return { success: false };
     }

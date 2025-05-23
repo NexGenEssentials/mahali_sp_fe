@@ -35,6 +35,9 @@ export const config = {
     "/service/:path*",
     "/booking/:path*",
     "/customer/:path*",
-    "/reviews/:path*",
+    "/destinations/:path*",
+    "/promotions/:path*",
+    "/users/:path*",
+    "/service_providers/:path*",
   ],
 };
