@@ -106,7 +106,7 @@ const PromotionPage = () => {
                   onClick={handleUpdateAdvert}
                   loading={updating}
                 >
-                  Update Advert
+                  Post Advert
                 </Button>
               </div>
             </div>
