@@ -1,13 +1,8 @@
 "use server";
 
-import {
-  BookingResponse,
-  PaymentResponseType,
-} from "@/app/types/booking";
+import { BookingResponse, PaymentResponseType } from "@/app/types/booking";
 import { cookies } from "next/headers";
 const base_url = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
-
-
 
 export const getAllMyBookings = async (): Promise<BookingResponse> => {
   const accessToken = (await cookies()).get("accessToken")?.value;
@@ -104,6 +99,68 @@ export const CreatePaymentMethod = async (bookingData: {
 
     return data;
   } catch (error) {
+    throw error;
+  }
+};
+
+// advert Api
+export type Adstype = {
+  id: number;
+  description: string;
+  url: string;
+  updated_at: string;
+};
+
+export const getAdvert = async (): Promise<{
+  status: string;
+  message: string;
+  data: Adstype;
+}> => {
+  const accessToken = cookies().get("accessToken")?.value;
+  try {
+    const response = await fetch(`${base_url}/top-ribbon-advert/latest/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    console.log("Something went wrong", { error });
+    throw error;
+  }
+};
+
+export const EditAdvert = async (advert: {
+  description: string;
+  url: string;
+}): Promise<{ status: string; data: Adstype }> => {
+  const accessToken = cookies().get("accessToken")?.value;
+  try {
+    const response = await fetch(`${base_url}/top-ribbon-advert/admin/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(advert),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    console.log("Something went wrong", { error });
     throw error;
   }
 };

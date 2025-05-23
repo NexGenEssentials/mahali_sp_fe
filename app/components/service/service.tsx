@@ -18,6 +18,10 @@ export const ServiceList = [
     icon: "mingcute:car-3-fill",
     title: "Car Rentals",
   },
+  {
+    title: "Custom Packages",
+    icon: "fa-solid:suitcase-rolling",
+  },
 ];
 const ServiceDetails = () => {
   const [adminServiceTab, setAdminServiceTab] = useState<string>(
@@ -27,7 +31,7 @@ const ServiceDetails = () => {
   return (
     <div>
       <ul className=" flex gap-2 border-b-2 w-fit">
-        {ServiceList.slice(0, 3).map((service, index) => (
+        {ServiceList.map((service, index) => (
           <li
             key={index}
             onClick={() => setAdminServiceTab(service.title)}

@@ -11,9 +11,12 @@ import { CreateTourPackage, getAllCountry } from "@/app/api/tour/action";
 import AddTourPlans from "./addTourPlan";
 import { motion } from "framer-motion";
 import AddTourImages from "./addTourImages";
+import { MdNavigateNext } from "react-icons/md";
+import { GrFormPrevious } from "react-icons/gr";
 
 const tourFormSchema = z.object({
   title: z.string().min(1),
+  price: z.string().min(1),
   description: z.string().min(1),
   location: z.string().min(1),
   best_time_to_visit: z.string().min(1),
@@ -33,6 +36,7 @@ export default function TourForm() {
   const [id, setId] = useState<number>(0);
   const [data, setData] = useState<TourFormSchema>({
     title: "",
+    price:"",
     description: "",
     location: "",
     best_time_to_visit: "",
@@ -53,8 +57,8 @@ export default function TourForm() {
   });
 
   const onSubmit = async (data: TourFormSchema) => {
-    setData(data)
-    setStep(2)
+    setData(data);
+    setStep(2);
   };
 
   useEffect(() => {
@@ -75,6 +79,60 @@ export default function TourForm() {
 
   return (
     <>
+      <div className="max-w-4xl mx-auto flex my-4 justify-between items-center">
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          type="button"
+          onClick={() => setStep((prev) => (prev >= 2 ? prev - 1 : 1))}
+          className=" w-8 h-8 px-1 text-xl rounded-full border text-center text-primaryGreen font-bold border-primaryGreen hover:text-white hover:bg-primaryGreen "
+        >
+          <GrFormPrevious />
+        </motion.button>
+
+        <div className="flex items-center justify-center gap-6">
+          {[
+            { label: "Tour Information" },
+            { label: "Tour Plans" },
+            { label: "Tour Images" },
+          ].map((item, index) => {
+            const current = index + 1;
+            const isCompleted = step > current;
+            const isActive = step === current;
+
+            return (
+              <div key={index} className="flex items-center gap-2">
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold
+            ${isCompleted || isActive ? "bg-primaryGreen" : "bg-gray-300"}`}
+                >
+                  {isCompleted ? "✓" : current}
+                </div>
+                <div className="text-sm text-gray-700 whitespace-nowrap">
+                  {item.label}
+                </div>
+                {index !== 2 && (
+                  <div
+                    className={`w-10 h-1 rounded ${
+                      step > current ? "bg-primaryGreen" : "bg-gray-300"
+                    }`}
+                  ></div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          type="button"
+          onClick={() => setStep((prev) => (prev <= 2 ? prev + 1 : 3))}
+          disabled={isSubmitting}
+          className=" w-8 h-8 px-1 text-xl rounded-full border text-center text-primaryGreen font-bold border-primaryGreen hover:text-white hover:bg-primaryGreen "
+        >
+          <MdNavigateNext />
+        </motion.button>
+      </div>
+
       {step === 1 && (
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -133,6 +191,14 @@ export default function TourForm() {
               {...register("max_people")}
               error={errors.max_people?.message}
             />
+            <Input
+              type="text"
+              label="Tour Price"
+              min={1}
+              placeholder="$ 00.00"
+              {...register("price")}
+              error={errors.price?.message}
+            />
 
             <div>
               <label
@@ -171,12 +237,12 @@ export default function TourForm() {
             error={errors.description?.message}
           />
 
-          <div className="w-full flex items-center justify-center">
+          <div className="w-full flex items-center justify-end">
             <motion.button
               whileTap={{ scale: 0.9 }}
               type="submit"
               disabled={isSubmitting}
-              className="mt-4 px-4 py-2 rounded-full bg-primaryGreen text-white w-3/4 hover:bg-primaryGreen/70 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-4 px-8 py-2 rounded-full bg-primaryGreen text-white w-fit hover:bg-primaryGreen/70 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting || loading ? "Submitting..." : "Next"}
             </motion.button>

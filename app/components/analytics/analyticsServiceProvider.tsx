@@ -34,6 +34,7 @@ import TopCustomersList from "./topCustomers";
 import { b } from "framer-motion/client";
 import { BiSolidPieChart } from "react-icons/bi";
 import RecentBookings from "../booking/recentBooking";
+import Loading from "@/app/loading";
 
 const chartData = [
   { date: "Jan", amount: 2000 },
@@ -162,6 +163,7 @@ export default function AnalyticsPage() {
       setLoading(false);
     }
   };
+  if (loading) return <Loading />;
 
   return (
     <div className="p-6 space-y-8">
@@ -175,39 +177,30 @@ export default function AnalyticsPage() {
           <FaMoneyBillWave className="text-green-500 text-2xl" />
           <div>
             <p className="text-sm text-gray-500">Total Earned</p>
-            {loading ? (
-              <Skeleton.Button active block size="large" />
-            ) : (
-              <h2 className="text-lg font-bold">
-                {analyticsData.total_revenue.toLocaleString()} Rwf
-              </h2>
-            )}
+
+            <h2 className="text-lg font-bold">
+              {analyticsData.total_revenue.toLocaleString()} Rwf
+            </h2>
           </div>
         </div>
         <div className={cardStyle}>
           <FaBookOpen className="text-blue-500 text-2xl" />
           <div>
             <p className="text-sm text-gray-500">Bookings</p>
-            {loading ? (
-              <Skeleton.Button active block size="large" />
-            ) : (
-              <h2 className="text-lg font-bold">
-                {analyticsData.total_bookings.toLocaleString()}
-              </h2>
-            )}
+
+            <h2 className="text-lg font-bold">
+              {analyticsData.total_bookings.toLocaleString()}
+            </h2>
           </div>
         </div>
         <div className={cardStyle}>
           <IoIosPeople className="text-stone-500 text-2xl" />
           <div>
             <p className="text-sm text-gray-500">Customers</p>
-            {loading ? (
-              <Skeleton.Button active block size="large" />
-            ) : (
-              <h2 className="text-lg font-bold">
-                {analyticsData.total_customers}
-              </h2>
-            )}
+
+            <h2 className="text-lg font-bold">
+              {analyticsData.total_customers}
+            </h2>
           </div>
         </div>
         <div className={cardStyle}>
@@ -218,6 +211,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
       </div>
+
       {/* big cards */}
       <div className="flex gap-4 items-stretch w-full flex-wrap">
         <TopCustomersList customers={topCustomers} />

@@ -15,6 +15,8 @@ interface ContextValue {
   setActiveTab: (activeTab: string) => void;
   activeModalId: string | null;
   setActiveModalId: (id: string | null) => void;
+  userRole: string | null;
+  setUserRole: (value: string | null) => void;
 }
 
 const AppContext = createContext<ContextValue>({} as ContextValue);
@@ -26,6 +28,7 @@ function ContextProvider({ children }: PropsWithChildren) {
   const pathname = usePathname();
   const currentPath = pathname.split("/").pop() || "Analytics";
   const [activeTab, setActiveTab] = useState(currentPath);
+  const [userRole, setUserRole]=useState<string|null>(null)
 
   return (
     <AppContext.Provider
@@ -38,6 +41,8 @@ function ContextProvider({ children }: PropsWithChildren) {
         setActiveTab,
         activeModalId,
         setActiveModalId,
+        userRole,
+        setUserRole,
       }}
     >
       {children}

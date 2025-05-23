@@ -4,26 +4,34 @@ import {
   FaChartBar,
   FaUserCircle,
   FaServicestack,
-  FaClipboardList,
-  FaUsers,
-  FaStar,
   FaAngleRight,
   FaAngleLeft,
+  FaUser,
+  FaUsersCog,
+  FaTags,
+  FaMapMarkedAlt,
+  FaSuitcaseRolling,
+  FaEnvelope,
+  FaMoneyCheckAlt,
+  FaClipboardList,
 } from "react-icons/fa";
 import { useAppContext } from "../context";
 import React from "react";
 import { AiOutlineLogout } from "react-icons/ai";
 import { usePathname, useRouter } from "next/navigation";
 import { Logout } from "../helpers/isUserLogedIn";
+import { decodeJWT } from "../helpers/decodeJWT";
+import { getUserProfile, User } from "../api/user/action";
 
-const SidebarItems = [
+const commonItems = [
   {
     name: "Analytics",
     icon: FaChartBar,
   },
   {
-    name: "Account",
+    name: "Register Account",
     icon: FaUserCircle,
+    link: "account",
   },
   {
     name: "Service",
@@ -35,12 +43,56 @@ const SidebarItems = [
   },
 ];
 
+const AdminItems = [
+  {
+    name: "Users",
+    icon: FaUser,
+  },
+  {
+    name: "Service Providers",
+    icon: FaUsersCog,
+    link: "service_providers",
+  },
+  {
+    name: "Promotions",
+    icon: FaTags,
+  },
+  {
+    name: "Destinations",
+    icon: FaMapMarkedAlt,
+  },
+
+  {
+    name: "Contact Messages",
+    icon: FaEnvelope,
+    link: "messages",
+  },
+  {
+    name: "Payments",
+    icon: FaMoneyCheckAlt,
+  },
+  {
+    name: "Bulk Bookings",
+    icon: FaClipboardList,
+    link: "bulk",
+  },
+];
+
 export default function Sidebar() {
-  const { expanded, setExpanded, activeTab, setActiveTab } = useAppContext();
+  const { expanded, setExpanded, activeTab, setActiveTab, setUserRole } =
+    useAppContext();
   const router = useRouter();
   const pathname = usePathname();
+  const [user, setUser] = useState<User>({
+    id: 0,
+    full_name: "",
+    email: "",
+    phone: "",
+    role: "",
+  });
 
   useEffect(() => {
+    handleGetuser();
     const current = pathname.split("/").pop() || "Analytics";
     if (current.includes("dashboard")) {
       setActiveTab("Analytics");
@@ -64,6 +116,18 @@ export default function Sidebar() {
     router.push("/");
     setActiveTab("Analytics");
   };
+
+  const handleGetuser = async () => {
+    const result = await getUserProfile();
+    if (result) {
+      setUserRole(result.role);
+      setUser(result);
+    }
+  };
+
+  const SidebarItems =
+    user.role === "admin" ? [...commonItems, ...AdminItems] : commonItems;
+
   return (
     <div
       className={`h-screen fixed bg-gray-50 shadow-md transition-all duration-300 ${
@@ -91,13 +155,14 @@ export default function Sidebar() {
           </div>
         )}
       </div>
+
       <div className="flex flex-col justify-between h-[85%]">
         <ul className="mt-4 space-y-4 px-4">
           {SidebarItems.map((item, index) => (
             <li
-              onClick={() => handleTabClick(item.name)}
+              onClick={() => handleTabClick(item.link ? item.link : item.name)}
               className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all duration-100 ${
-                activeTab === item.name
+                activeTab === (item.link ? item.link : item.name)
                   ? "bg-green-100 text-slate-700 font-bold shadow-md"
                   : "text-slate-500"
               } ${
@@ -107,7 +172,7 @@ export default function Sidebar() {
             >
               {React.createElement(item.icon, {
                 className: `${
-                  activeTab === item.name
+                  activeTab === (item.link ? item.link : item.name)
                     ? "text-slate-700 text-lg"
                     : "text-slate-500"
                 } cursor-pointer`,

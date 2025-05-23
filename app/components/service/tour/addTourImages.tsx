@@ -112,9 +112,9 @@ const AddTourImages = ({ tourId }: AddTourImagesProps) => {
       <button
         onClick={handleUpload}
         disabled={loading}
-        className="px-4 py-2 bg-primaryGreen text-white rounded hover:bg-primaryGreen/70 disabled:opacity-50"
+        className="px-4 py-2 bg-primaryGreen text-white rounded-full hover:bg-primaryGreen/70 disabled:opacity-50"
       >
-        {loading ? "Uploading..." : "Upload Images"}
+        {loading ? "Saving..." : "Save Images"}
       </button>
     </div>
   );

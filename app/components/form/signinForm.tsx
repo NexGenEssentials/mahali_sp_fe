@@ -4,6 +4,7 @@ import { LockOutlined, LoginOutlined, MailOutlined } from "@ant-design/icons";
 import { Button, Form, Input, notification } from "antd";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAppContext } from "@/app/context";
 
 export interface SigninFormData {
   email: string;
@@ -14,6 +15,7 @@ const SignInForm = () => {
   const [loading, setLoading] = useState(false);
   const route = useRouter();
   const searchParams = useSearchParams();
+  const { setUserRole } = useAppContext();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
   const onFinish = async (values: SigninFormData) => {
@@ -37,6 +39,7 @@ const SignInForm = () => {
           placement: "topRight",
           duration: 1.5,
         });
+        setUserRole(data.role);
 
         setTimeout(() => {
           route.push(callbackUrl);

@@ -61,7 +61,7 @@ export default function AddTourPlans({
         ...data,
         tour_plans: tourPlans,
       });
-      
+
       if (result.success) {
         setId(result.data.id);
         message.success("Tour submitted successfully!");
@@ -79,31 +79,34 @@ export default function AddTourPlans({
 
       <form
         onSubmit={handleSubmit(handleAddPlan)}
-        className="space-y-4 border p-4 rounded-md bg-gray-50"
+        className="space-y-4  p-4 border rounded-md bg-white"
       >
-        <Input
-          label="Title"
-          {...register("title")}
-          error={errors.title?.message}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            label="Title"
+            {...register("title")}
+            error={errors.title?.message}
+          />
+
+          <Input
+            label="Inclusion"
+            {...register("inclusion")}
+            error={errors.inclusion?.message}
+          />
+          <Input
+            label="Accommodation"
+            {...register("accommodation")}
+            error={errors.accommodation?.message}
+          />
+        </div>
         <Textarea
           label="Description"
           {...register("description")}
           error={errors.description?.message}
         />
-        <Input
-          label="Inclusion"
-          {...register("inclusion")}
-          error={errors.inclusion?.message}
-        />
-        <Input
-          label="Accommodation"
-          {...register("accommodation")}
-          error={errors.accommodation?.message}
-        />
         <button
           type="submit"
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          className="px-4 py-2 bg-primaryGreen text-white rounded-full hover:bg-primaryGreen/70"
         >
           Add Plan
         </button>
@@ -134,34 +137,24 @@ export default function AddTourPlans({
         </div>
       )}
 
-      <div className="w-full flex items-center justify-center">
+      <div className="w-full flex items-center justify-end">
+        {/* <motion.button
+          whileTap={{ scale: 0.9 }}
+          type="button"
+          onClick={handleFinalSubmit}
+          disabled={isSubmitting}
+          className="mt-4 px-4 py-2 rounded-full bg-primaryGreen text-white w-fit hover:bg-primaryGreen/70 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? "Saving..." : "Back"}
+        </motion.button> */}
         <motion.button
           whileTap={{ scale: 0.9 }}
           type="button"
           onClick={handleFinalSubmit}
           disabled={isSubmitting}
-          className="mt-4 px-4 py-2 rounded-full bg-primaryGreen text-white w-3/4 hover:bg-primaryGreen/70 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="mt-4 px-4 py-2 rounded-full bg-primaryGreen text-white w-fit hover:bg-primaryGreen/70 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Submitting..." : "Submit Tour"}
-        </motion.button>
-      </div>
-      <div className="w-full flex items-center justify-between">
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          type="button"
-          onClick={() => setStep(1)}
-          className=" px-4 py-2 rounded bg-green-600 text-white hover:bg-green-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Previous
-        </motion.button>
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          type="button"
-          onClick={() => setStep(3)}
-          disabled={isSubmitting}
-          className=" px-4 py-2 rounded bg-green-600 text-white hover:bg-green-600/70 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Next
+          {isSubmitting ? "Saving..." : "Save & Continue"}
         </motion.button>
       </div>
     </div>
