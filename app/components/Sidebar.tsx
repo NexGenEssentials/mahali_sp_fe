@@ -1,5 +1,5 @@
 "use client";
-import { use, useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   FaChartBar,
   FaUserCircle,
@@ -10,9 +10,7 @@ import {
   FaUsersCog,
   FaTags,
   FaMapMarkedAlt,
-  FaSuitcaseRolling,
   FaEnvelope,
-  FaMoneyCheckAlt,
   FaClipboardList,
 } from "react-icons/fa";
 import { useAppContext } from "../context";
@@ -20,8 +18,6 @@ import React from "react";
 import { AiOutlineLogout } from "react-icons/ai";
 import { usePathname, useRouter } from "next/navigation";
 import { Logout } from "../helpers/isUserLogedIn";
-import { decodeJWT } from "../helpers/decodeJWT";
-import { getUserProfile, User } from "../api/user/action";
 
 const commonItems = [
   {
@@ -41,6 +37,10 @@ const commonItems = [
     name: "Booking",
     icon: FaClipboardList,
   },
+  // {
+  //   name: "Payments",
+  //   icon: FaMoneyCheckAlt,
+  // },
 ];
 
 const AdminItems = [
@@ -67,10 +67,7 @@ const AdminItems = [
     icon: FaEnvelope,
     link: "messages",
   },
-  {
-    name: "Payments",
-    icon: FaMoneyCheckAlt,
-  },
+
   {
     name: "Bulk Bookings",
     icon: FaClipboardList,
@@ -111,7 +108,7 @@ export default function Sidebar() {
 
   const SidebarItems =
     userRole === "admin" ? [...commonItems, ...AdminItems] : commonItems;
-  
+
   return (
     <div
       className={`h-screen fixed bg-gray-50 shadow-md transition-all duration-300 ${

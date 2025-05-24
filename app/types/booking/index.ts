@@ -34,3 +34,28 @@ export type PaymentResponseType = {
   tid: string;
   url: string;
 };
+
+export type BulkCarDetail = {
+  car_type: string;
+  model: string;
+  quantity: number;
+};
+
+export interface BulkBookingType {
+  user: number;
+  start_date: string; // You can use `Date` if you're converting to Date objects
+  end_date: string;
+  pickup_location: string;
+  trip_location: string;
+  driver_option: string;
+  note: string;
+  status: string;
+  car_details: BulkCarDetail[];
+  total_price: number | null;
+}
+
+export interface BulkBookingResponse {
+  status: string;
+  message: string;
+  data: BulkBookingType[];
+}

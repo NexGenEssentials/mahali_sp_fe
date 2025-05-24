@@ -14,102 +14,103 @@ import {
 } from "@/app/api/analytics/adminApi/action";
 
 import { useEffect, useState } from "react";
-import { FaCrown, FaUserAlt, FaWallet } from "react-icons/fa";
+import { FaCrown, FaUserAlt } from "react-icons/fa";
 import { IoIosPeople } from "react-icons/io";
 import TopAdminCustomersList from "./topAdminCustomers";
 import TopAdminRevenueList from "./topAdminRevenue";
 import TopAdminServiceList from "./topAdminService";
 import TopAdminBookingList from "./topAdminBookings";
-import { Skeleton } from "antd";
 import TopAdminRevenueServiceList from "./topAdminRevenueService";
+import { Skeleton } from "antd";
 
 const cardStyle =
   "bg-white shadow p-4 rounded-lg flex items-center gap-4 min-h-[80px]";
 
 export default function AdminAnalyticsPage() {
-  const [loading, setLoading] = useState(true);
   const [analyticsData, setAnalyticsData] = useState({
     active_users: 0,
     new_users_this_month: 0,
     total_users: 0,
-    topService: "",
+    topService: "N/A",
   });
 
-  const [topCustomers, setTopCustomers] = useState<
-    {
-      id: number;
-      full_name: string;
-      bookings: number;
-      email: string;
-    }[]
-  >([]);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+  const [topCustomers, setTopCustomers] = useState<{ id: number; full_name: string; bookings: number; email: string; }[]>([]);
+  const [topCustomersLoading, setTopCustomersLoading] = useState(true);
+
   const [topRevenue, setTopRevenue] = useState<TopRevenue[]>([]);
+  const [topRevenueLoading, setTopRevenueLoading] = useState(true);
+
   const [topService, setTopService] = useState<TopService[]>([]);
+  const [topServiceLoading, setTopServiceLoading] = useState(true);
+
   const [topBooking, setTopBooking] = useState<TopBooking[]>([]);
-  const [topRevenueService, setTopRevenueService] = useState<TopRevenueService[]>([]);
+  const [topBookingLoading, setTopBookingLoading] = useState(true);
 
+  const [topRevenueService, setTopRevenueService] = useState<
+    TopRevenueService[]
+  >([]);
+  const [topRevenueServiceLoading, setTopRevenueServiceLoading] =
+    useState(true);
+
+  // Load summary and top service
   useEffect(() => {
-    fetchAnalyticsData();
-  }, []);
+    const loadSummaryAndService = async () => {
+      try {
+        setSummaryLoading(true);
+        const summary = await getAdminUsersSummary();
+        const service = await getAdminBookingByService();
 
-  const fetchAnalyticsData = async () => {
-    try {
-      setLoading(true);
-
-      const [
-        summary,
-        topCustomersResponse,
-        topRevenueResponse,
-        topServiceResponse,
-        topBookingResponse,
-        topRevenueBookResponse,
-
-      ] = await Promise.all([
-        getAdminUsersSummary(),
-        getAdminUserTopBooking(),
-        getAdminUserTopRevenue(),
-        getAdminBookingByService(),
-        getAdminBookingsTopItems(),
-        getAdminBookingsRevenueByService(),
-      ]);
-
-      if (summary) {
         setAnalyticsData({
           active_users: summary.active_users,
           new_users_this_month: summary.new_users_this_month,
           total_users: summary.total_users,
           topService:
-            topServiceResponse?.bookings_by_service_type?.[0]?.service_type ||
-            "Not Available",
+            service?.bookings_by_service_type?.[0]?.service_type || "N/A",
         });
+      } catch (error) {
+        console.error("Error loading summary and top service:", error);
+      } finally {
+        setSummaryLoading(false);
       }
+    };
+    loadSummaryAndService();
+  }, []);
 
-      if (topCustomersResponse) {
-        setTopCustomers(topCustomersResponse.top_users_by_bookings || []);
-      }
+  useEffect(() => {
+    getAdminUserTopBooking()
+      .then((res) => setTopCustomers(res.top_users_by_bookings || []))
+      .catch(console.error)
+      .finally(() => setTopCustomersLoading(false));
+  }, []);
 
-      if (topRevenueResponse) {
-        setTopRevenue(topRevenueResponse.top_users_by_revenue || []);
-      }
+  useEffect(() => {
+    getAdminUserTopRevenue()
+      .then((res) => setTopRevenue(res.top_users_by_revenue || []))
+      .catch(console.error)
+      .finally(() => setTopRevenueLoading(false));
+  }, []);
 
-      if (topServiceResponse) {
-        setTopService(topServiceResponse.bookings_by_service_type || []);
-      }
+  useEffect(() => {
+    getAdminBookingByService()
+      .then((res) => setTopService(res.bookings_by_service_type || []))
+      .catch(console.error)
+      .finally(() => setTopServiceLoading(false));
+  }, []);
 
-      if (topBookingResponse) {
-        setTopBooking(topBookingResponse.top_booked_items || []);
-      }
-      if (topRevenueBookResponse) {
-       setTopRevenueService(
-         topRevenueBookResponse.revenue_by_service_type || []
-       );
-      }
-    } catch (error) {
-      console.error("Error fetching analytics data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    getAdminBookingsTopItems()
+      .then((res) => setTopBooking(res.top_booked_items || []))
+      .catch(console.error)
+      .finally(() => setTopBookingLoading(false));
+  }, []);
+
+  useEffect(() => {
+    getAdminBookingsRevenueByService()
+      .then((res) => setTopRevenueService(res.revenue_by_service_type || []))
+      .catch(console.error)
+      .finally(() => setTopRevenueServiceLoading(false));
+  }, []);
 
   return (
     <div className="p-6 space-y-8">
@@ -139,14 +140,14 @@ export default function AdminAnalyticsPage() {
           {
             icon: <FaCrown className="text-yellow-500 text-2xl" />,
             label: "Top Service",
-            value: analyticsData.topService || "N/A",
+            value: analyticsData.topService,
           },
         ].map(({ icon, label, value }, i) => (
           <div key={i} className={cardStyle}>
             {icon}
             <div>
               <p className="text-sm text-gray-500">{label}</p>
-              {loading ? (
+              {summaryLoading ? (
                 <Skeleton.Input active size="small" style={{ width: 80 }} />
               ) : (
                 <h2 className="text-lg font-bold">{value}</h2>
@@ -157,13 +158,37 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {/* Data Lists */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 w-full  gap-4">
-        <TopAdminCustomersList customers={topCustomers} />
-        <TopAdminRevenueList revenue={topRevenue} />
-        <TopAdminServiceList services={topService} />
-        <TopAdminRevenueServiceList servicesRevenue={topRevenueService} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {topCustomersLoading ? (
+          <Skeleton active title />
+        ) : (
+          <TopAdminCustomersList customers={topCustomers} />
+        )}
+
+        {topRevenueLoading ? (
+          <Skeleton active title />
+        ) : (
+          <TopAdminRevenueList revenue={topRevenue} />
+        )}
+
+        {topServiceLoading ? (
+          <Skeleton active title />
+        ) : (
+          <TopAdminServiceList services={topService} />
+        )}
+
+        {topRevenueServiceLoading ? (
+          <Skeleton active title />
+        ) : (
+          <TopAdminRevenueServiceList servicesRevenue={topRevenueService} />
+        )}
       </div>
-      <TopAdminBookingList bookings={topBooking} />
+
+      {topBookingLoading ? (
+        <Skeleton active title />
+      ) : (
+        <TopAdminBookingList bookings={topBooking} />
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use server";
 
-import { BookingResponse, PaymentResponseType } from "@/app/types/booking";
+import { BookingResponse, BulkBookingResponse, PaymentResponseType } from "@/app/types/booking";
 import { cookies } from "next/headers";
 const base_url = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
@@ -151,6 +151,31 @@ export const EditAdvert = async (advert: {
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(advert),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    console.log("Something went wrong", { error });
+    throw error;
+  }
+};
+
+// bulk booking
+
+export const getbulkBookings = async (): Promise<BulkBookingResponse> => {
+  const accessToken = cookies().get("accessToken")?.value;
+  try {
+    const response = await fetch(`${base_url}/bulk-bookings`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
 
     const data = await response.json();
