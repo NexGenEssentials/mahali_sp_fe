@@ -35,7 +35,9 @@ export default function AdminAnalyticsPage() {
   });
 
   const [summaryLoading, setSummaryLoading] = useState(true);
-  const [topCustomers, setTopCustomers] = useState<{ id: number; full_name: string; bookings: number; email: string; }[]>([]);
+  const [topCustomers, setTopCustomers] = useState<
+    { id: number; full_name: string; bookings: number; email: string }[]
+  >([]);
   const [topCustomersLoading, setTopCustomersLoading] = useState(true);
 
   const [topRevenue, setTopRevenue] = useState<TopRevenue[]>([]);
@@ -159,18 +161,6 @@ export default function AdminAnalyticsPage() {
 
       {/* Data Lists */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {topCustomersLoading ? (
-          <Skeleton active title />
-        ) : (
-          <TopAdminCustomersList customers={topCustomers} />
-        )}
-
-        {topRevenueLoading ? (
-          <Skeleton active title />
-        ) : (
-          <TopAdminRevenueList revenue={topRevenue} />
-        )}
-
         {topServiceLoading ? (
           <Skeleton active title />
         ) : (
@@ -181,6 +171,17 @@ export default function AdminAnalyticsPage() {
           <Skeleton active title />
         ) : (
           <TopAdminRevenueServiceList servicesRevenue={topRevenueService} />
+        )}
+        {topCustomersLoading ? (
+          <Skeleton active title />
+        ) : (
+          <TopAdminCustomersList customers={topCustomers} />
+        )}
+
+        {topRevenueLoading ? (
+          <Skeleton active title />
+        ) : (
+          <TopAdminRevenueList revenue={topRevenue} />
         )}
       </div>
 
