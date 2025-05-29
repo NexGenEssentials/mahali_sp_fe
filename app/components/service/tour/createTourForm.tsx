@@ -22,7 +22,7 @@ const tourFormSchema = z.object({
   location: z.string().min(1),
   best_time_to_visit: z.string().min(1),
   duration_days: z.coerce.number().min(1),
-  duration_nights: z.coerce.number().min(1),
+  duration_nights: z.coerce.number().min(0),
   min_people: z.coerce.number().min(1),
   max_people: z.coerce.number().min(1),
   country_id: z.coerce.number().min(1),

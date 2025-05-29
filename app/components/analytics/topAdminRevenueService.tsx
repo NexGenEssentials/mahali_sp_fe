@@ -38,16 +38,13 @@ const TopAdminRevenueServiceList: FC<TopCustomersListProps> = ({
             <YAxis />
             <Tooltip
               formatter={(value: any) =>
-               
-                 typeof value === "number" ? `${value.toLocaleString()} Rwf` : value +'Rwf'
+                typeof value === "number"
+                  ? `${value.toLocaleString()} Rwf`
+                  : value + "Rwf"
               }
             />
             <Legend />
-            <Bar
-              dataKey="total_revenue"
-              name="Total Revenue"
-              fill="#f59e0b"
-            />
+            <Bar dataKey="total_revenue" name="Total Revenue" fill="#f59e0b" />
           </BarChart>
         </ResponsiveContainer>
       </div>

@@ -18,7 +18,7 @@ interface TopCustomersListProps {
   services: TopService[];
 }
 
-const TopAdminServiceList: FC<TopCustomersListProps> = ({ services }) => {
+const TopAdminServiceList: FC<TopCustomersListProps> = ({ services}) => {
   return (
     <Card
       title={
