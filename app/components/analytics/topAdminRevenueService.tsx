@@ -31,23 +31,34 @@ const TopAdminRevenueServiceList: FC<TopCustomersListProps> = ({
       }
       className="shadow-md rounded-xl"
     >
-      <div className="w-full h-72">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={servicesRevenue}>
-            <XAxis dataKey="service_type" tick={{ fontSize: 12 }} />
-            <YAxis />
-            <Tooltip
-              formatter={(value: any) =>
-                typeof value === "number"
-                  ? `${value.toLocaleString()} Rwf`
-                  : value + "Rwf"
-              }
-            />
-            <Legend />
-            <Bar dataKey="total_revenue" name="Total Revenue" fill="#f59e0b" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      {servicesRevenue.length <= 0 ? (
+        <div className="min-h-80 font-bold text-primaryGreen text-xl flex items-center justify-center">
+          {" "}
+         No Revenue Data Available {" "}
+        </div>
+      ) : (
+        <div className="w-full h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={servicesRevenue}>
+              <XAxis dataKey="service_type" tick={{ fontSize: 12 }} />
+              <YAxis />
+              <Tooltip
+                formatter={(value: any) =>
+                  typeof value === "number"
+                    ? `${value.toLocaleString()} Rwf`
+                    : value + "Rwf"
+                }
+              />
+              <Legend />
+              <Bar
+                dataKey="total_revenue"
+                name="Total Revenue"
+                fill="#f59e0b"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </Card>
   );
 };
