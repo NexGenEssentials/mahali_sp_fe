@@ -50,22 +50,19 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-x-auto">
-      <table className="min-w-[2000px] divide-y divide-gray-200 text-sm text-left">
+      <table className=" divide-y divide-gray-200 text-sm text-left">
         <thead className="bg-gray-100 sticky top-0 z-10">
           <tr>
             {[
               "ID",
               "Name",
               "Location",
-              "Address",
-
+             
               "Category",
               "Rating",
 
               "Created At",
               "Active",
-              "Featured",
-              "Tags",
 
               "Check-in",
               "Check-out",
@@ -102,7 +99,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                   <td className="px-6 py-4 whitespace-nowrap">{a.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{a.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{a.location}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{a.address}</td>
+                  
 
                   <td className="px-6 py-4 whitespace-nowrap">{a.category}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -123,18 +120,8 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                       {a.is_active ? "Yes" : "No"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        a.is_featured
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {a.is_featured ? "Yes" : "No"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{a.tags}</td>
+                  
+                 
                   <td className="px-6 py-4 whitespace-nowrap">
                     {a.check_in_time}
                   </td>

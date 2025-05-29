@@ -115,7 +115,7 @@ export default function AdminAnalyticsPage() {
   }, []);
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-2 lg:p-6 space-y-8">
       <div>
         <h2 className="text-2xl font-bold mb-4">Welcome Back!</h2>
         <p className="text-gray-600">Mahali Africa Adventure Dashboard</p>

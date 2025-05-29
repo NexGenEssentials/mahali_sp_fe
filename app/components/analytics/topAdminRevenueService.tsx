@@ -45,8 +45,8 @@ const TopAdminRevenueServiceList: FC<TopCustomersListProps> = ({
               <Tooltip
                 formatter={(value: any) =>
                   typeof value === "number"
-                    ? `${value.toLocaleString()} Rwf`
-                    : value + "Rwf"
+                    ? `$ ${value.toLocaleString()}`
+                    : "$"+ value 
                 }
               />
               <Legend />
