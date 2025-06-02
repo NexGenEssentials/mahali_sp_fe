@@ -81,7 +81,7 @@ export default function AddVehicleForm() {
   return (
     <>
       <div
-        onClick={() => router.push("/service")}
+        onClick={() => router.push("/dashboard/service")}
         className="border-b-2 w-fit flex items-center gap-1 duration-200  mb-2 text-sm text-slate-400 hover:text-slate-500 font-semibold hover:border-primaryGreen cursor-pointer"
       >
         <IoMdArrowRoundBack /> Go Back

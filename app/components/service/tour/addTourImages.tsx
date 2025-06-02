@@ -56,7 +56,7 @@ const AddTourImages = ({ tourId }: AddTourImagesProps) => {
         message.success("Images uploaded successfully");
         setImages([]);
         setPreviews([]);
-        router.push("/service");
+        router.push("/dashboard/service");
       }
     } catch (error) {
       message.error("Error uploading images");

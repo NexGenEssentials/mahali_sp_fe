@@ -69,7 +69,7 @@ export function CarImages({ carId }: { carId: number }) {
       } else {
         message.success("Image uploaded successfully");
 
-        router.push("/service/car");
+        router.push("/dashboard/service/car");
       }
     } catch (error) {
       message.error("Error uploading data");
