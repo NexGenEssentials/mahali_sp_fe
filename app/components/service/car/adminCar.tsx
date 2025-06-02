@@ -4,13 +4,14 @@ import CarRentalTable from "./carRentalTable";
 
 import { SquarePen } from "lucide-react";
 import { CarResponse } from "@/app/types/service";
-import { getAllCars } from "@/app/api/carRental/action";
+import { DeleteCar, getAllCars } from "@/app/api/carRental/action";
 import Loader from "@/app/components/skeleton/loader";
 import { useAppContext } from "@/app/context";
 import CenterModal from "@/app/components/model/centerModel";
 import CarDetails from "./carDetails";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { message } from "antd";
 
 function AdminCarRentalApp() {
   const [searchParams, setSearchParams] = useState<{
@@ -51,8 +52,20 @@ function AdminCarRentalApp() {
     }
   };
 
-  const handleDelete = (id: number) => {
-    console.log("Delete car with id:", id);
+  const handleDelete = async (id: number) => {
+    try {
+      const result = await DeleteCar(id);
+      if (result) {
+        message.success("Car deleted successfully");
+        setCarList((prev) => ({
+          ...prev,
+          data: (prev?.data ?? []).filter((car) => car.id !== id),
+        }));
+      }
+    } catch (error) {
+      console.error("Error deleting car:", error);
+      message.error("Failed to delete car. Please try again later.");
+    }
   };
 
   const handleUpdate = (car: any) => {

@@ -8,15 +8,13 @@ import Sidebar from "../components/Sidebar";
 const ServiceProviderTemplate = ({ children }: { children: ReactNode }) => {
   const { expanded } = useAppContext();
   return (
-    <>
-      <Sidebar />
-      <div className={`${expanded ? "pl-64" : "pl-20"} mx-4`}>
-        <Topbar />
-        <div className=" bg-gray-100 p-6 min-h-[90vh] rounded-lg">
-          {children}
-        </div>
-      </div>
-    </>
+    <div
+      className={`${
+        expanded ? "pl-64" : "pl-20"
+      } mx-4 bg-gray-100 min-h-[90vh] pt-6 rounded-lg`}
+    >
+      {children}
+    </div>
   );
 };
 

@@ -171,7 +171,7 @@ export default function TourForm() {
             <Input
               type="number"
               label="Duration Nights"
-              min={1}
+              min={0}
               placeholder="Number of nights for the tour"
               {...register("duration_nights")}
               error={errors.duration_nights?.message}

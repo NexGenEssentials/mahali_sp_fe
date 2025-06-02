@@ -15,7 +15,7 @@ export const CreateCar = async (
   status: string;
   message: string;
   data: {
-    id:number;
+    id: number;
   };
 }> => {
   try {
@@ -30,10 +30,10 @@ export const CreateCar = async (
 
     const data = await response.json();
     if (!response.ok) {
-      return data
+      return data;
     }
 
-    return data
+    return data;
   } catch (error) {
     throw error;
   }
@@ -78,7 +78,7 @@ export const CreateCarFeatures = async (
     });
 
     const data = await response.json();
-    
+
     if (!response.ok) {
       return {
         success: false,
@@ -242,6 +242,28 @@ export const getCarAvailabilty = async (
     }
 
     return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const DeleteCar = async (
+  carId: number
+): Promise<boolean> => {
+  try {
+    const response = await fetch(`${base_url}/cars/${carId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (response.status === 204) {
+      return true;
+    }
+
+    return false;
   } catch (error) {
     throw error;
   }
