@@ -18,7 +18,7 @@ interface TopCustomersListProps {
   services: TopService[];
 }
 
-const TopAdminServiceList: FC<TopCustomersListProps> = ({ services}) => {
+const TopAdminServiceList: FC<TopCustomersListProps> = ({ services }) => {
   return (
     <Card
       title={
@@ -32,7 +32,7 @@ const TopAdminServiceList: FC<TopCustomersListProps> = ({ services}) => {
       {services.length <= 0 ? (
         <div className="min-h-80 font-bold text-primaryGreen text-xl flex items-center justify-center">
           {" "}
-         No Service data Available{" "}
+          No Service data Available{" "}
         </div>
       ) : (
         <div className="w-full h-72">

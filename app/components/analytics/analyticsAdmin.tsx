@@ -22,6 +22,7 @@ import TopAdminServiceList from "./topAdminService";
 import TopAdminBookingList from "./topAdminBookings";
 import TopAdminRevenueServiceList from "./topAdminRevenueService";
 import { Skeleton } from "antd";
+import { TOPREVENUE, TOPSERVICE } from "@/app/costant";
 
 const cardStyle =
   "bg-white shadow p-4 rounded-lg flex items-center gap-4 min-h-[80px]";
@@ -95,7 +96,13 @@ export default function AdminAnalyticsPage() {
 
   useEffect(() => {
     getAdminBookingByService()
-      .then((res) => setTopService(res.bookings_by_service_type || []))
+      .then((res) =>
+        setTopService(
+          res.bookings_by_service_type.length > 0
+            ? res.bookings_by_service_type
+            : TOPSERVICE
+        )
+      )
       .catch(console.error)
       .finally(() => setTopServiceLoading(false));
   }, []);
@@ -109,7 +116,13 @@ export default function AdminAnalyticsPage() {
 
   useEffect(() => {
     getAdminBookingsRevenueByService()
-      .then((res) => setTopRevenueService(res.revenue_by_service_type || []))
+      .then((res) =>
+        setTopRevenueService(
+          res.revenue_by_service_type.length > 0
+            ? res.revenue_by_service_type
+            : TOPREVENUE
+        )
+      )
       .catch(console.error)
       .finally(() => setTopRevenueServiceLoading(false));
   }, []);

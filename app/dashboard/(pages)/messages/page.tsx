@@ -21,6 +21,7 @@ const ContactUsTable = () => {
   const handleGetMessage = async () => {
     try {
       const result = await getMessages();
+      console.log("Messages:", result);
       if (result.status) {
         setMessages(result.data);
       }

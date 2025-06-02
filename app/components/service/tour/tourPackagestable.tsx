@@ -11,6 +11,7 @@ import {
 import { TourDataType } from "@/app/types/service/tour";
 import { getAllToursData } from "@/app/helpers/filter";
 import Loader from "@/app/components/skeleton/loader";
+import Popconfirm from "antd/es/popconfirm";
 
 interface TourPackagesTableProps {
   tour: TourDataType;
@@ -153,13 +154,29 @@ const TourPackagesTable: React.FC<TourPackagesTableProps> = ({
                         >
                           <Pencil className="w-5 h-5" />
                         </button>
-                        <button
-                          onClick={() => onDelete(tourPackage.id)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Delete"
+                        <Popconfirm
+                          title="Are you sure you want to delete this booking?"
+                          onConfirm={() => onDelete(tourPackage.id)}
+                          okText="Yes"
+                          cancelText="No"
+                          okButtonProps={{
+                            style: {
+                              backgroundColor: "#3f5a2e",
+                              borderColor: "#16a34a",
+                            },
+                            type: "primary",
+                          }}
+                          cancelButtonProps={{
+                            style: { color: "#dc2626" },
+                          }}
                         >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
+                          <button
+                            className="text-red-600 hover:text-red-900"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </Popconfirm>
                       </div>
                     </td>
                   </tr>

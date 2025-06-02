@@ -143,6 +143,7 @@ export const getAdminBookingByService = async (): Promise<{
     );
 
     const data = await response.json();
+    console.log("Bookings by service type:", response);
     if (!response.ok) {
       return data;
     }

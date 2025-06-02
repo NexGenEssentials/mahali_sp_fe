@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 
 const base_url = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 const accessToken = cookies().get("accessToken")?.value;
+
 export type User = {
   id: number;
   full_name: string;

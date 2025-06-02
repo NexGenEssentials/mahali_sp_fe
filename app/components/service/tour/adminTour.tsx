@@ -36,7 +36,10 @@ function AdminTourServiceApp() {
     const result = await DeleteTourPackage(id);
     if (result) {
       message.success("Tour Package deleted Sucessfully");
-      getAllTourPackages();
+      setPackageList((prev) => ({
+        ...prev,
+        data: prev.data.filter((tour) => tour.id !== id),
+      }));
     }
   };
 
@@ -53,7 +56,7 @@ function AdminTourServiceApp() {
       <div className="w-full mx-auto">
         <div className="flex justify-between gap-4 w-full px-4 mb-8">
           <h1 className="text-3xl font-bold text-gray-900 ">Tour Packages</h1>
-          <Link href="/service/tour">
+          <Link href="/dashboard/service/tour">
             <motion.span
               whileHover={{ scale: 0.9 }}
               className="p-3 rounded-md text-white hover:bg-primaryGreen bg-primaryGreen/70 cursor-pointer font-bold flex gap-2"

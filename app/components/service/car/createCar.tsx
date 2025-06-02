@@ -123,7 +123,7 @@ export default function AddVehicleForm() {
               </div>
 
               {/* Brand Input */}
-               <div>
+              <div>
                 <label
                   htmlFor="brand"
                   className="block text-sm font-medium text-gray-700"
@@ -380,7 +380,7 @@ export default function AddVehicleForm() {
           {/* Buttons */}
           <div className="flex justify-end gap-2 pt-4">
             <button
-              onClick={() => router.push("/service")}
+              onClick={() => router.push("/dashboard/service")}
               type="button"
               className="px-4 py-2 border rounded-md"
             >

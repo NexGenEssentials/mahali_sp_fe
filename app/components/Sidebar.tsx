@@ -96,7 +96,7 @@ export default function Sidebar() {
     if (tabName === "Analytics") {
       router.push("/dashboard");
     } else {
-      router.push(`/${tabName.toLowerCase()}`);
+      router.push(`/dashboard/${tabName.toLowerCase()}`);
     }
   };
 
@@ -143,7 +143,7 @@ export default function Sidebar() {
             <li
               onClick={() => handleTabClick(item.link ? item.link : item.name)}
               className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all duration-100 ${
-                activeTab === (item.link ? item.link : item.name)
+                activeTab.includes(item.link ? item.link : item.name)
                   ? "bg-green-100 text-slate-700 font-bold shadow-md"
                   : "text-slate-500"
               } ${

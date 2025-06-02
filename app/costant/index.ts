@@ -158,3 +158,27 @@ export const carTypesData = {
     },
   ],
 };
+
+export const TOPSERVICE = [
+  { content_type: 23, count: 60, revenue: 23, service_type: "Car" },
+  { content_type: 24, count: 54, revenue: 24, service_type: "Accomodation" },
+  { content_type: 25, count: 85, revenue: 25, service_type: "Tour Package" },
+  { content_type: 26, count: 26, revenue: 26, service_type: "Custom PAckage" },
+];
+export const TOPREVENUE = [{
+  content_type: 23,
+  total_revenue: 6000,
+  service_type: "Car",
+}, {
+  content_type: 24,
+  total_revenue: 5400,
+  service_type: "Accomodation",
+}, {
+  content_type: 25,
+  total_revenue: 8500,
+  service_type: "Tour Package",
+}, {
+  content_type: 26,
+  total_revenue: 2600,
+  service_type: "Custom Package",
+}];

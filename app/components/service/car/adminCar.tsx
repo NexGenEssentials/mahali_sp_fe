@@ -93,7 +93,7 @@ function AdminCarRentalApp() {
           </h1>
           <motion.span
             onClick={() => {
-              router.push("/service/car");
+              router.push("/dashboard/service/car");
             }}
             whileHover={{ scale: 0.9 }}
             className="p-3 rounded-md text-white hover:bg-primaryGreen bg-primaryGreen/70 cursor-pointer font-bold flex gap-2"
