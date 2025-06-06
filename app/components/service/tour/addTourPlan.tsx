@@ -29,6 +29,7 @@ export default function AddTourPlans({
   setId: (value: number) => void;
 }) {
   const [tourPlans, setTourPlans] = useState<TourPlan[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -51,8 +52,10 @@ export default function AddTourPlans({
   };
 
   const handleFinalSubmit = async () => {
+    setIsLoading(true);
     if (tourPlans.length === 0) {
       message.warning("Please add at least one tour plan.");
+      setIsLoading(false);
       return;
     }
 
@@ -70,6 +73,8 @@ export default function AddTourPlans({
       }
     } catch (err) {
       message.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -154,7 +159,7 @@ export default function AddTourPlans({
           disabled={isSubmitting}
           className="mt-4 px-4 py-2 rounded-full bg-primaryGreen text-white w-fit hover:bg-primaryGreen/70 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Saving..." : "Save & Continue"}
+          {isLoading ? "Saving..." : "Save & Continue"}
         </motion.button>
       </div>
     </div>
