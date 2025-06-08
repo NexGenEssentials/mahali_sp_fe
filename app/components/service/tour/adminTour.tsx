@@ -32,16 +32,26 @@ function AdminTourServiceApp() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    const result = await DeleteTourPackage(id);
-    if (result) {
-      message.success("Tour Package deleted Sucessfully");
-      setPackageList((prev) => ({
-        ...prev,
-        data: prev.data.filter((tour) => tour.id !== id),
-      }));
-    }
-  };
+const handleDelete = async (id: number) => {
+  const result = await DeleteTourPackage(id);
+
+  if (result) {
+    message.success("Tour Package deleted successfully");
+
+    setPackageList((prev) => {
+      if (!prev) return prev;
+
+      const updatedData: TourDataType = {};
+
+      for (const country in prev) {
+        const countryTours = prev[country];
+        updatedData[country] = countryTours.filter((tour) => tour.id !== id);
+      }
+
+      return updatedData;
+    });
+  }
+};
 
   const handleUpdate = (tourPackage: number) => {
     console.log("Update tour package:", tourPackage);

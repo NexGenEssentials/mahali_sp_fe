@@ -1,6 +1,8 @@
 "use server";
 
+import { AccommFormData } from "@/app/components/service/accommodation/createAccomodation";
 import {
+  AccommBody,
   AccommodationResponse,
   SingleAccommodationResponse,
 } from "@/app/types/service/accommodation";
@@ -74,7 +76,7 @@ export const getAccommodationsFilters = async ({
     );
 
     const data = await response.json();
-   
+
     return data;
   } catch (error) {
     console.log("Something went wrong", { error });
@@ -106,6 +108,7 @@ export type facility = {
   id: number;
   name: string;
 };
+
 export type categoryCounts = {
   category: string;
   count: number;
@@ -133,6 +136,31 @@ export const getFacilities = async (): Promise<{
   }
 };
 
+export const CreateNewFacility = async (
+  name: string
+): Promise<{ success: boolean; data: { id: number; name: string } }> => {
+  try {
+    const response = await fetch(`${base_url}/facilities/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ name: name }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    console.log("Something went wrong", { error });
+    throw error;
+  }
+};
+
 export const getAccommodationCategory = async (): Promise<{
   success: boolean;
   message: string;
@@ -152,5 +180,58 @@ export const getAccommodationCategory = async (): Promise<{
   } catch (error) {
     console.log("Something went wrong", { error });
     throw error;
+  }
+};
+
+export const CreateAccomodation = async (
+  body: AccommFormData
+): Promise<{
+  success: boolean;
+  message: string;
+  data: { id: number };
+}> => {
+  try {
+    const response = await fetch(`${base_url}/accommodations/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    console.log("Something went wrong", { error });
+    throw error;
+  }
+};
+
+export const CreateAccommodationImage = async (
+  accommImages: FormData,
+  Id: number
+): Promise<{ success: boolean }> => {
+  try {
+    const response = await fetch(`${base_url}/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: accommImages,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { success: false };
   }
 };

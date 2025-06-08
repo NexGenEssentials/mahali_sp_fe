@@ -73,7 +73,7 @@ const TopAdminBookingList: FC<TopCustomersListProps> = ({ bookings }) => {
       <Table
         dataSource={bookings}
         columns={columns}
-        rowKey={(record) => record.item_name + record.service_type}
+        rowKey={(record) => record.item_name + record.service_type + record.count}
         pagination={{ pageSize: 5 }}
         className="overflow-x-auto"
       />

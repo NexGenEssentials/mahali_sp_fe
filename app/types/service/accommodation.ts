@@ -71,3 +71,24 @@ export type SingleAccommodationResponse = {
     room_types: RoomType[];
   };
 };
+
+export type AccommBody = {
+  name: string;
+  description: string;
+  location: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  category: string;
+  rating: number;
+  facility_ids: number[];
+  image: File | null; // or string if using image URL
+  is_active: boolean;
+  is_featured: boolean;
+  tags: string; // or string[] if parsed as array
+  check_in_time: string; // format: "HH:mm:ss"
+  check_out_time: string; // format: "HH:mm:ss"
+  smoking_allowed: boolean;
+  pets_allowed: boolean;
+  additional_rules: string;
+};

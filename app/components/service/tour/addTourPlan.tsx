@@ -64,7 +64,7 @@ export default function AddTourPlans({
         ...data,
         tour_plans: tourPlans,
       });
-
+   
       if (result.success) {
         setId(result.data.id);
         message.success("Tour submitted successfully!");
@@ -143,15 +143,7 @@ export default function AddTourPlans({
       )}
 
       <div className="w-full flex items-center justify-end">
-        {/* <motion.button
-          whileTap={{ scale: 0.9 }}
-          type="button"
-          onClick={handleFinalSubmit}
-          disabled={isSubmitting}
-          className="mt-4 px-4 py-2 rounded-full bg-primaryGreen text-white w-fit hover:bg-primaryGreen/70 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSubmitting ? "Saving..." : "Back"}
-        </motion.button> */}
+   
         <motion.button
           whileTap={{ scale: 0.9 }}
           type="button"

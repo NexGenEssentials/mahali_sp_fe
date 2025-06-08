@@ -58,6 +58,10 @@ const TourPackagesTable: React.FC<TourPackagesTableProps> = ({
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
+
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Tour ID
+              </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Title
               </th>
@@ -100,6 +104,11 @@ const TourPackagesTable: React.FC<TourPackagesTableProps> = ({
                     key={tourPackage.id}
                     className="hover:bg-gray-50 transition-colors duration-150"
                   >
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">
+                        {tourPackage.id}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">
                         {tourPackage.title}
@@ -155,7 +164,7 @@ const TourPackagesTable: React.FC<TourPackagesTableProps> = ({
                           <Pencil className="w-5 h-5" />
                         </button>
                         <Popconfirm
-                          title="Are you sure you want to delete this booking?"
+                          title="Are you sure you want to delete this Tour Package?"
                           onConfirm={() => onDelete(tourPackage.id)}
                           okText="Yes"
                           cancelText="No"
