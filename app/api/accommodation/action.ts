@@ -1,8 +1,8 @@
 "use server";
 
 import { AccommFormData } from "@/app/components/service/accommodation/createAccomodation";
+import { RoomFormData } from "@/app/dashboard/(pages)/service/accommodation/[id]/create-room-type/page";
 import {
-  AccommBody,
   AccommodationResponse,
   SingleAccommodationResponse,
 } from "@/app/types/service/accommodation";
@@ -212,17 +212,69 @@ export const CreateAccomodation = async (
   }
 };
 
+
 export const CreateAccommodationImage = async (
-  accommImages: FormData,
-  Id: number
+  accommImages: FormData
 ): Promise<{ success: boolean }> => {
   try {
-    const response = await fetch(`${base_url}/`, {
+    const response = await fetch(`${base_url}/accommodation/upload-image/`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
       body: accommImages,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
+};
+
+export const CreateRoomTypeAPI = async (
+  body: RoomFormData
+): Promise<{
+  success: boolean;
+  message: string;
+  data: { id: number };
+}> => {
+  try {
+    const response = await fetch(`${base_url}/room-types/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    console.log("Something went wrong", { error });
+    throw error;
+  }
+};
+
+export const CreateRoomImage = async (
+  roomImage: FormData
+): Promise<{ success: boolean }> => {
+  try {
+    const response = await fetch(`${base_url}/room-type/upload-image/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: roomImage,
     });
 
     const data = await response.json();

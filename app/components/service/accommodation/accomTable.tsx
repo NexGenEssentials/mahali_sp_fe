@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Loader from "@/app/components/skeleton/loader";
 import { AccommodationType } from "@/app/types/service/accommodation";
+import { useRouter } from "next/navigation";
 
 interface AccommodationTableProps {
   accom: AccommodationType[];
@@ -33,6 +34,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
   const endIndex = startIndex + itemsPerPage;
   const currentItems = accom.slice(startIndex, endIndex);
   const totalPages = Math.ceil(accom.length / itemsPerPage);
+  const route = useRouter();
 
   const renderRatingStars = (rating: number) => (
     <div className="flex items-center">
@@ -48,6 +50,12 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
     </div>
   );
 
+  const handleCreateRoomType = (accommodationId: number) => {
+    route.push(
+      `/dashboard/service/accommodation/${accommodationId}/create-room-type`
+    );
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-x-auto">
       <table className=" divide-y divide-gray-200 text-sm text-left">
@@ -57,7 +65,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
               "ID",
               "Name",
               "Location",
-             
+
               "Category",
               "Rating",
 
@@ -68,6 +76,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
               "Check-out",
 
               "Lowest Price",
+              "Add Room Type",
 
               "Actions",
             ].map((header, idx) => (
@@ -99,7 +108,6 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                   <td className="px-6 py-4 whitespace-nowrap">{a.id}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{a.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{a.location}</td>
-                  
 
                   <td className="px-6 py-4 whitespace-nowrap">{a.category}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -120,8 +128,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                       {a.is_active ? "Yes" : "No"}
                     </span>
                   </td>
-                  
-                 
+
                   <td className="px-6 py-4 whitespace-nowrap">
                     {a.check_in_time}
                   </td>
@@ -131,6 +138,15 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
 
                   <td className="px-6 py-4 whitespace-nowrap">
                     ${a.lowest_price}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button
+                      onClick={() => handleCreateRoomType(a.id)}
+                      className="text-indigo-600 hover:text-indigo-800 hover:underline duration-200 transition"
+                      title="Add Room Type"
+                    >
+                      Add Room Type
+                    </button>
                   </td>
 
                   <td className="px-6 py-4 whitespace-nowrap">

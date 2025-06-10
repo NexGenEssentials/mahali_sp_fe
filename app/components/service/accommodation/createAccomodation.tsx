@@ -14,7 +14,7 @@ import {
   CreateAccomodation,
 } from "@/app/api/accommodation/action";
 import { useRouter } from "next/navigation";
-import { TimePicker } from "antd";
+
 
 const accommSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -81,9 +81,9 @@ const AccommodationForm: React.FC = () => {
         image: null,
         facility_ids: facilityIds,
       };
-
-      const result = await CreateAccomodation(formData);
       
+      const result = await CreateAccomodation(formData);
+
       if (!result) {
         message.error("Failed to create accommodation. Please try again.");
         return;
@@ -93,16 +93,17 @@ const AccommodationForm: React.FC = () => {
         router.push("/dashboard/service");
         if (image) {
           imageData.append("image", image);
+          imageData.append("accommodation", result.data.id.toString());
         }
-        // const response = await CreateAccommodationImage(
-        //   imageData,
-        //   result.data.id
-        // );
-        // if (response.success) {
-        //   message.success("Image uploaded successfully!");
-        // } else {
-        //   message.error("Failed to upload image.");
-        // }
+        const response = await CreateAccommodationImage(
+          imageData,
+          
+        );
+        if (response.success) {
+          message.success("Image uploaded successfully!");
+        } else {
+          message.error("Failed to upload image.");
+        }
       }
     } catch (error) {
       console.error("Error creating accommodation:", error);
@@ -187,7 +188,6 @@ const AccommodationForm: React.FC = () => {
             className="input input-bordered w-full"
             error={errors.check_in_time?.message}
           />
-          
 
           <Input
             label="Check-out Time"

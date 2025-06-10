@@ -1,0 +1,186 @@
+"use client";
+import { getTourCategories } from "@/app/api/tour/action";
+import Loader from "@/app/components/skeleton/loader";
+import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
+import { CategoryType } from "@/app/types/service/tour";
+import React, { useEffect, useState } from "react";
+
+const ITEMS_PER_PAGE = 5;
+
+const CreateCustomActivity = () => {
+  const [loading, setLoading] = useState(false);
+  const [categoryList, setCategoryList] = useState<CategoryType[]>([]);
+  const [expandedCategory, setExpandedCategory] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    getCategoryList();
+  }, []);
+
+  const getCategoryList = async () => {
+    setLoading(true);
+    try {
+      const result = await getTourCategories();
+      setCategoryList(result.data);
+    } catch (error) {
+      console.error("Error fetching categories", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleCategory = (categoryId: number, e?: React.MouseEvent) => {
+    // prevent row click conflicts if needed
+    e?.stopPropagation();
+    setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
+  };
+
+  // Pagination Logic
+  const totalPages = Math.ceil(categoryList.length / ITEMS_PER_PAGE);
+  const displayedCategories = categoryList.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  return (
+    <ServiceProviderTemplate>
+      <div className="bg-gray-100 p-6">
+        <div className="w-full mx-auto">
+          <div className="flex justify-between gap-4 w-full px-4 mb-8 items-center">
+            <h1 className="text-3xl font-bold text-gray-900">
+              Create Custom Activity
+            </h1>
+          </div>
+          {loading ? (
+            <Loader />
+          ) : (
+            <>
+              <table className="w-full rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="p-3 text-left">Id</th>
+                    <th className="p-3 text-left">Name</th>
+                    <th className="p-3 text-left">Description</th>
+                    <th className="p-3 text-center">Total Activity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {displayedCategories.map((category) => (
+                    <React.Fragment key={category.id}>
+                      <tr
+                        className="cursor-pointer border-b hover:bg-gray-50"
+                        onClick={() => toggleCategory(category.id)}
+                      >
+                        <td className="p-3 text-center">{category.id}</td>
+                        <td className="p-3">{category.name}</td>
+                        <td className="p-3 text-center">
+                          {category.description || "No description available"}
+                        </td>
+                        <td className="p-3 text-center">
+                          {category.activities ? category.activities.length : 0}
+                        </td>
+                      </tr>
+                      {expandedCategory === category.id && (
+                        <tr>
+                          <td colSpan={4} className="p-4 bg-gray-50">
+                            <div className="flex items-center justify-between gap-4">
+                              <div className="mb-2 text-lg font-semibold text-gray-700">
+                                Activities:
+                              </div>
+                              <button
+                                onClick={() =>
+                                  console.log("Add Activities clicked")}
+                                className="bg-primaryGreen text-white px-3 py-2 text-xs rounded-md hover:opacity-90 transition"
+                              >
+                                Add Activities
+                              </button>
+                            </div>
+                            {category.activities &&
+                            category.activities.length > 0 ? (
+                              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                {category.activities.map((activity) => (
+                                  <div
+                                    key={activity.id}
+                                    className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
+                                  >
+                                    <div className="font-bold text-gray-800 text-lg mb-1">
+                                      {activity.name}
+                                    </div>
+                                    <p className="text-gray-600 text-sm">
+                                      <span className="font-semibold">
+                                        Description:
+                                      </span>{" "}
+                                      {activity.description || "N/A"}
+                                    </p>
+                                    <p className="text-gray-600 text-sm ">
+                                      <span className="font-semibold">
+                                        Location:
+                                      </span>{" "}
+                                      {activity.location}
+                                    </p>
+                                    <p className="text-gray-600 text-sm">
+                                      <span className="font-semibold">
+                                        Price/Day:
+                                      </span>{" "}
+                                      $ {activity.price_per_day}
+                                    </p>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-gray-600">
+                                No activities available.
+                              </p>
+                            )}
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+              {/* Pagination Buttons */}
+              <div className="flex justify-between items-center mt-6">
+                <button
+                  onClick={prevPage}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 bg-primaryGreen text-white rounded-md transition ${
+                    currentPage === 1
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-green-600"
+                  }`}
+                >
+                  Previous
+                </button>
+                <span className="text-gray-700">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={nextPage}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 bg-primaryGreen text-white rounded-md transition ${
+                    currentPage === totalPages
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-green-600"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </ServiceProviderTemplate>
+  );
+};
+
+export default CreateCustomActivity;

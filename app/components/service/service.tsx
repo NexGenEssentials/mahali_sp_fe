@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import AdminTourServiceApp from "./tour/adminTour";
 import AdminCarRentalApp from "./car/adminCar";
 import AdminAccommodationTable from "./accommodation/accommodation";
+import CustomPackage from "./customPackage/customPackage";
 
 export const ServiceList = [
   {
@@ -49,9 +50,8 @@ const ServiceDetails = () => {
 
       {adminServiceTab === "Holiday & Tour Packages" && <AdminTourServiceApp />}
       {adminServiceTab === "Car Rentals" && <AdminCarRentalApp />}
-      {adminServiceTab === "Accommodations" && (
-        <AdminAccommodationTable />
-      )}
+      {adminServiceTab === "Accommodations" && <AdminAccommodationTable />}
+      {adminServiceTab === "Custom Packages" && <CustomPackage />}
     </div>
   );
 };
