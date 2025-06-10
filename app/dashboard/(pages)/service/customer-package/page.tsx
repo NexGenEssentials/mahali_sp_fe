@@ -30,7 +30,7 @@ const CreateCustomActivity = () => {
     setLoading(true);
     try {
       const result = await getTourCategories();
-      setCategoryList(result.data);
+      setCategoryList(result.data.sort((a, b) => b.id - a.id));
     } catch (error) {
       console.error("Error fetching categories", error);
     } finally {
