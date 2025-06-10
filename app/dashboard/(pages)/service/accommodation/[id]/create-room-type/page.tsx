@@ -20,6 +20,7 @@ const roomSchema = z.object({
   max_guests: z.number().min(1, "Maximum guests must be at least 1"),
   max_children: z.number().min(0, "Maximum children cannot be negative"),
   max_beds: z.number().min(1, "Maximum beds must be at least 1"),
+  total_units: z.number().min(1, "Maximum beds must be at least 1"),
   bed_type: z.string().min(1, "Bed type is required"),
   size: z.number().min(1, "Room size must be positive"),
   includes: z.string().optional(),
@@ -56,6 +57,7 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
       max_beds: 1,
       bed_type: "",
       size: 0,
+      total_units: 1,
       includes: "",
       image: null,
       is_available: true,
@@ -133,20 +135,15 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Add New Room
+              Add New Room Type
             </h1>
-            <p className="text-gray-600">
-              Create a new room listing with all the details.
-              <br /> Fill out all the required fields to create your room
-              listing
-            </p>
           </div>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="bg-white rounded-2xl shadow-xl overflow-hidden"
           >
-            <div className="p-8 space-y-8">
+            <div className="p-8 space-y-4">
               {/* Basic Information */}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -247,13 +244,22 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
                     required
                   />
                 </div>
-
-                <Input
-                  label="Includes"
-                  {...register("includes")}
-                  error={errors.includes?.message}
-                  placeholder="e.g., Wi-Fi, Breakfast, Air Conditioning"
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Input
+                    label="total Units"
+                    type="number"
+                    {...register("total_units", { valueAsNumber: true })}
+                    error={errors.total_units?.message}
+                    placeholder="1"
+                    required
+                  />
+                  <Input
+                    label="Includes"
+                    {...register("includes")}
+                    error={errors.includes?.message}
+                    placeholder="e.g., Wi-Fi, Breakfast, Air Conditioning"
+                  />
+                </div>
               </div>
 
               {/* Image Upload */}

@@ -2,10 +2,14 @@
 import { SquarePen } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import AccommodationTable from "./accomTable";
-import { getAllAccomodations } from "@/app/api/accommodation/action";
+import {
+  DeleteAccommodation,
+  getAllAccomodations,
+} from "@/app/api/accommodation/action";
 import { AccommodationType } from "@/app/types/service/accommodation";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import message from "antd/es/message";
 
 const AdminAccommodationTable = () => {
   const [loading, setLoading] = useState(true);
@@ -27,8 +31,17 @@ const AdminAccommodationTable = () => {
       setLoading(false);
     }
   };
-  const handleDelete = (id: number) => {
-    console.log("Delete tour package with id:", id);
+  const handleDelete = async (id: number) => {
+    try {
+      const result = await DeleteAccommodation(id);
+      if (result) {
+        message.success("Accommodation deleted successfully");
+        setAccomList((prev) => prev.filter((accomId) => accomId.id !== id));
+      }
+    } catch (error) {
+      console.error("Error deleting Accommodation:", error);
+      message.error("Failed to delete Accommodation. Please try again later.");
+    }
   };
 
   const handleUpdate = (id: number) => {

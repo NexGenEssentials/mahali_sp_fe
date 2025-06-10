@@ -11,6 +11,7 @@ import {
 import Loader from "@/app/components/skeleton/loader";
 import { AccommodationType } from "@/app/types/service/accommodation";
 import { useRouter } from "next/navigation";
+import Popconfirm from "antd/es/popconfirm";
 
 interface AccommodationTableProps {
   accom: AccommodationType[];
@@ -58,7 +59,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-x-auto">
-      <table className=" divide-y divide-gray-200 text-sm text-left">
+      <table className="divide-y divide-gray-200 text-sm text-left">
         <thead className="bg-gray-100 sticky top-0 z-10">
           <tr>
             {[
@@ -70,10 +71,8 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
               "Rating",
 
               "Created At",
-              "Active",
 
-              "Check-in",
-              "Check-out",
+              "In/Out",
 
               "Lowest Price",
               "Add Room Type",
@@ -117,23 +116,9 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                   <td className="px-6 py-4 whitespace-nowrap">
                     {new Date(a.created_at).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        a.is_active
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {a.is_active ? "Yes" : "No"}
-                    </span>
-                  </td>
 
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {a.check_in_time}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {a.check_out_time}
+                    {a.check_in_time}/{a.check_out_time}
                   </td>
 
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -165,13 +150,30 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button
-                        onClick={() => onDelete(a.id)}
-                        className="text-red-600"
-                        title="Delete"
+                     
+                      <Popconfirm
+                        title="Are you sure you want to delete this booking?"
+                        onConfirm={() => onDelete(a.id)}
+                        okText="Yes"
+                        cancelText="No"
+                        okButtonProps={{
+                          style: {
+                            backgroundColor: "#3f5a2e",
+                            borderColor: "#16a34a",
+                          },
+                          type: "primary",
+                        }}
+                        cancelButtonProps={{
+                          style: { color: "#dc2626" },
+                        }}
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                        <button
+                          className="text-red-600 hover:text-red-900"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </Popconfirm>
                     </div>
                   </td>
                 </tr>

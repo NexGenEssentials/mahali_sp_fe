@@ -1,5 +1,6 @@
 "use client";
 import { CreateCategories } from "@/app/api/tour/action";
+import { useAppContext } from "@/app/context";
 import { message } from "antd";
 import React, { useState } from "react";
 
@@ -10,7 +11,9 @@ const CreateTourCategoryForm = ({
 }) => {
   const [formData, setFormData] = useState({ name: "", description: "" });
   const [loading, setLoading] = useState(false);
-
+  const [saveLoading, setSaveLoading] = useState(false);
+  const { setActiveModalId } = useAppContext();
+  const [save, setSave] = useState(false);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -23,10 +26,17 @@ const CreateTourCategoryForm = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    if (save) {
+      setSaveLoading;
+    } else {
+      setLoading(true);
+    }
     try {
       const result = await CreateCategories(formData);
       if (result.success) {
+        if (save) {
+          setActiveModalId(null);
+        }
         message.success("Category created successfully!");
         reload(true);
       }
@@ -78,17 +88,31 @@ const CreateTourCategoryForm = ({
           className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
         />
       </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className={`w-full py-2 px-4 rounded-md text-white transition ${
-          loading
-            ? "bg-green-500 opacity-50 cursor-not-allowed"
-            : "bg-primaryGreen hover:bg-green-600"
-        }`}
-      >
-        {loading ? "Submitting..." : "Submit"}
-      </button>
+      <div className="flex flex-col items-center justify-between gap-3 ">
+        <button
+          onClick={() => setSave(true)}
+          type="submit"
+          disabled={saveLoading}
+          className={`w-full py-2 px-4 rounded-md text-white transition ${
+            saveLoading
+              ? "bg-green-500 opacity-50 cursor-not-allowed"
+              : "bg-primaryGreen hover:bg-green-600"
+          }`}
+        >
+          {loading ? "Saving..." : "Save"}
+        </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full py-2 px-4 rounded-md text-white transition ${
+            loading
+              ? "bg-green-500 opacity-50 cursor-not-allowed"
+              : "bg-primaryGreen hover:bg-green-600"
+          }`}
+        >
+          {loading ? "Saving..." : "Save & Add Another"}
+        </button>
+      </div>
     </form>
   );
 };

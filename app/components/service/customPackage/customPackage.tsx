@@ -58,7 +58,9 @@ const CustomPackage = () => {
     <div className=" bg-gray-100 p-6">
       <div className="w-full mx-auto">
         <div className="flex justify-between gap-4 w-full px-4 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 ">Custom Tour Packages</h1>
+          <h1 className="text-3xl font-bold text-gray-900 ">
+            Custom Tour Packages
+          </h1>
           <Link href="/dashboard/service/customer-package">
             <motion.span
               whileHover={{ scale: 0.9 }}
@@ -68,20 +70,27 @@ const CustomPackage = () => {
             </motion.span>
           </Link>
         </div>
-        <div className="flex flex-col gap-6 min-h-screen px-4">
-          <div className="flex gap-4 flex-wrap items-stretch justify-center">
-            {[...filteredCustomPack]
-              .sort((a, b) => b.id - a.id)
-              .map((pack) => (
-                <CustomPackageCard
-                  key={pack.id}
-                  customPackage={pack}
-                  onApprove={handleApprove}
-                  onDelete={handleDelete}
-                />
-              ))}
+        {filteredCustomPack.length <= 0 ? (
+          <div className="h-[50vh] flex items-center justify-center bg-white text-lg font-semibold">
+            {" "}
+            Custom package not available !!
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-col gap-6 min-h-screen px-4">
+            <div className="flex gap-4 flex-wrap items-stretch justify-center">
+              {[...filteredCustomPack]
+                .sort((a, b) => b.id - a.id)
+                .map((pack) => (
+                  <CustomPackageCard
+                    key={pack.id}
+                    customPackage={pack}
+                    onApprove={handleApprove}
+                    onDelete={handleDelete}
+                  />
+                ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

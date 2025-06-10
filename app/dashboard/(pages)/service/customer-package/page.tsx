@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { SquarePen } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 const CreateCustomActivity = () => {
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ const CreateCustomActivity = () => {
 
   return (
     <ServiceProviderTemplate>
-      <div className="bg-gray-100 p-6">
+      <div className="bg-white p-6">
         <div className="w-full mx-auto">
           <div className="flex justify-between gap-4 w-full px-4 mb-8 items-center">
             <h1 className="text-3xl font-bold text-gray-900">
@@ -86,6 +86,8 @@ const CreateCustomActivity = () => {
                     <th className="p-3 text-left">Name</th>
                     <th className="p-3 text-left">Description</th>
                     <th className="p-3 text-center">Total Activity</th>
+                    <th className="p-3 text-center">Action</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -107,7 +109,7 @@ const CreateCustomActivity = () => {
                         >
                           <td className="p-3 text-center">{category.id}</td>
                           <td className="p-3">{category.name}</td>
-                          <td className="p-3 text-center">
+                          <td className="p-3">
                             {category.description || "No description available"}
                           </td>
                           <td className="p-3 text-center">
@@ -115,10 +117,15 @@ const CreateCustomActivity = () => {
                               ? category.activities.length
                               : 0}
                           </td>
+                          <td className="flex items-center justify-center p-2">
+                            <button className="bg-red-500 text-white p-2 text-sm rounded-lg">
+                              Delete
+                            </button>
+                          </td>
                         </tr>
                         {expandedCategory === category.id && (
                           <tr>
-                            <td colSpan={4} className="p-4 bg-gray-50">
+                            <td colSpan={5} className="p-4 bg-gray-50">
                               <div className="flex items-center justify-between gap-4">
                                 <div className="mb-2 text-lg font-semibold text-gray-700">
                                   Activities:
