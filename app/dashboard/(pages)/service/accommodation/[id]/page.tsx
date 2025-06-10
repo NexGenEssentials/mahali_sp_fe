@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { AccommodationType, RoomType } from "@/app/types/service/accommodation";
 import { getAccommodation } from "@/app/api/accommodation/action";
 import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
+import { useRouter } from "next/navigation";
+import Loader from "@/app/components/skeleton/loader";
 
 const AccommodationDetails = ({ params }: { params: { id: number } }) => {
   const [accommodation, setAccommodation] = useState<AccommodationType | null>(
@@ -10,6 +12,7 @@ const AccommodationDetails = ({ params }: { params: { id: number } }) => {
   );
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchAccommodationDetails = async () => {
@@ -29,7 +32,7 @@ const AccommodationDetails = ({ params }: { params: { id: number } }) => {
 
   if (loading) {
     return (
-      <div className="text-center py-10 text-xl font-medium">Loading...</div>
+      <Loader/>
     );
   }
 
@@ -149,46 +152,70 @@ const AccommodationDetails = ({ params }: { params: { id: number } }) => {
         </div>
 
         {/* Room Types */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">Room Types</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {roomTypes.map((room) => (
-              <div
-                key={room.id}
-                className="bg-white rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300"
-              >
-                <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                  {room.name}
-                </h3>
-                <p className="text-gray-600 mb-4">{room.description}</p>
-                <div className="space-y-2 text-gray-600 text-sm">
-                  <p>
-                    <strong>Price per Night:</strong> ${room.price_per_night}
-                  </p>
-                  <p>
-                    <strong>Max Guests:</strong> {room.max_guests}
-                  </p>
-                  <p>
-                    <strong>Max Children:</strong> {room.max_children}
-                  </p>
-                  <p>
-                    <strong>Bed Type:</strong> {room.bed_type}
-                  </p>
-                  <p>
-                    <strong>Room Size:</strong> {room.size} sq ft
-                  </p>
-                  <p>
-                    <strong>Includes:</strong> {room.includes}
-                  </p>
-                  <p>
-                    <strong>Availability:</strong>{" "}
-                    {room.is_available ? "Available" : "Not Available"}
-                  </p>
-                </div>
-              </div>
-            ))}
+        {roomTypes.length <= 0 ? (
+          <div className="text-center py-10">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
+              No Room Types Available
+            </h2>
+            <p className="text-gray-600">
+              Currently, there are no room types available for this
+              accommodation.
+            </p>
+            <button
+              className="mt-4 px-6 py-2 bg-primaryGreen/70 text-white rounded-lg hover:bg-primaryGreen transition-colors"
+              onClick={() =>
+                router.push(
+                  `/dashboard/service/accommodation/${params.id}/create-room-type`
+                )
+              }
+            >
+              Add Room Type
+            </button>
           </div>
-        </div>
+        ) : (
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
+              Room Types
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {roomTypes.map((room) => (
+                <div
+                  key={room.id}
+                  className="bg-white rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300"
+                >
+                  <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+                    {room.name}
+                  </h3>
+                  <p className="text-gray-600 mb-4">{room.description}</p>
+                  <div className="space-y-2 text-gray-600 text-sm">
+                    <p>
+                      <strong>Price per Night:</strong> ${room.price_per_night}
+                    </p>
+                    <p>
+                      <strong>Max Guests:</strong> {room.max_guests}
+                    </p>
+                    <p>
+                      <strong>Max Children:</strong> {room.max_children}
+                    </p>
+                    <p>
+                      <strong>Bed Type:</strong> {room.bed_type}
+                    </p>
+                    <p>
+                      <strong>Room Size:</strong> {room.size} sq ft
+                    </p>
+                    <p>
+                      <strong>Includes:</strong> {room.includes}
+                    </p>
+                    <p>
+                      <strong>Availability:</strong>{" "}
+                      {room.is_available ? "Available" : "Not Available"}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </ServiceProviderTemplate>
   );
