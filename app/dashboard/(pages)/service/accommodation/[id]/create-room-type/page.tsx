@@ -11,9 +11,9 @@ import {
   CreateRoomTypeAPI,
 } from "@/app/api/accommodation/action";
 import message from "antd/es/message";
+import { useRouter } from "next/navigation";
 
 const roomSchema = z.object({
-  accommodation: z.number().optional(),
   name: z.string().min(1, "Room name is required"),
   description: z.string().min(5, "Description must be at least 5 characters"),
   price_per_night: z.number().min(0, "Price must be positive"),
@@ -37,19 +37,17 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setValue,
     reset,
-    watch,
   } = useForm<RoomFormData>({
     resolver: zodResolver(roomSchema),
-    mode: "onChange", // Enable real-time validation
+
     defaultValues: {
-      accommodation: params.id,
       name: "",
       description: "",
       price_per_night: 0,
@@ -64,9 +62,6 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
     },
   });
 
- 
-  const watchedValues = watch();
-
   const bedTypes = [
     "Single Bed",
     "Twin Beds",
@@ -78,20 +73,15 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
   ];
 
   const onSubmit = async (data: RoomFormData) => {
-    // console.log("Form submitted with data:", data);
-    // console.log("Current errors:", errors);
-
     setLoading(true);
     try {
       const roomData = {
         ...data,
+        accommodation: params.id,
         image: null,
       };
 
-      // console.log("Sending room data:", roomData);
-
       const result = await CreateRoomTypeAPI(roomData);
-      // console.log("API result:", result);
 
       if (result.success) {
         reset();
@@ -108,6 +98,7 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
           message.success("Room image uploaded successfully!");
           setImage(null);
           setImagePreview(null);
+          router.push(`/dashboard/service/accommodation/${params.id}`);
         } else {
           message.error("Room created, but image upload failed.");
         }
@@ -136,14 +127,6 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
     }
   };
 
-  // Debug function to check form state
-  const debugFormState = () => {
-    // console.log("Current form values:", watchedValues);
-    // console.log("Form errors:", errors);
-    // console.log("Form is valid:", isValid);
-    // console.log("Params ID:", params.id);
-  };
-
   return (
     <ServiceProviderTemplate>
       <div className="min-h-screen bg-gray-50 p-4">
@@ -158,22 +141,6 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
               listing
             </p>
           </div>
-          {/* Debug Panel - Remove this in production */}
-          {/* <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-yellow-800 mb-2">Debug Info:</h3>
-            <button
-              type="button"
-              onClick={debugFormState}
-              className="bg-yellow-500 text-white px-3 py-1 rounded text-sm mb-2"
-            >
-              Log Form State
-            </button>
-            <div className="text-sm text-yellow-700">
-              <p>Form Valid: {isValid ? "Yes" : "No"}</p>
-              <p>Has Errors: {Object.keys(errors).length > 0 ? "Yes" : "No"}</p>
-              <p>Accommodation ID: {params.id}</p>
-            </div>
-          </div> */}
 
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -343,7 +310,7 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
                   <input
                     type="checkbox"
                     {...register("is_available")}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                    className="ant-checkbox ant-checkbox-checked ant-checkbox-inner w-4 h-4 text-primaryGreen bg-gray-100 border-gray-300 rounded"
                   />
                   <label className="text-sm font-medium text-gray-700">
                     Room is available for booking

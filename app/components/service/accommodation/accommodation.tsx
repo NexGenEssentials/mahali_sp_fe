@@ -36,7 +36,7 @@ const AdminAccommodationTable = () => {
   };
 
   const handleView = (id: number, category: string) => {
-    router.push(`/service/accommodation/${category}/${id}`);
+    router.push(`/dashboard/service/accommodation/${id}`);
   };
 
   return (
