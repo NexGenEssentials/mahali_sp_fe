@@ -1,8 +1,10 @@
 "use server";
 
+import { ActivityFormData } from "@/app/components/form/createActivityForm";
 import {
   AddActivityTourPackageType,
   CategoriesResponse,
+  CategoryType,
   CountryResponseType,
   countryTourResponseType,
   CreateTourType,
@@ -199,6 +201,51 @@ export const AddNewActivities = async (
 
     const result = await response.json();
 
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const CreateCategories = async (
+  data: { name: string; description: string },
+  packageId?: number
+): Promise<{ success: boolean; message: string; data: CategoryType }> => {
+  try {
+    const response = await fetch(
+      `${base_url}/categories/create/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const CreateActivities = async (
+  data: ActivityFormData
+): Promise<CategoriesResponse> => {
+  try {
+    const response = await fetch(`${base_url}/activities/create/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+   console.log("Activity created:", result);
     return result;
   } catch (error) {
     throw error;

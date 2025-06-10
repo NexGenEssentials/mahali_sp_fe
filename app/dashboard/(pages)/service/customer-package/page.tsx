@@ -1,21 +1,30 @@
 "use client";
 import { getTourCategories } from "@/app/api/tour/action";
+import CreateTourActivityForm from "@/app/components/form/createActivityForm";
+import CreateTourCategoryForm from "@/app/components/form/createCategory";
+import CenterModal from "@/app/components/model/centerModel";
 import Loader from "@/app/components/skeleton/loader";
+import { useAppContext } from "@/app/context";
 import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
 import { CategoryType } from "@/app/types/service/tour";
+import { motion } from "framer-motion";
+import { SquarePen } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 const ITEMS_PER_PAGE = 5;
 
 const CreateCustomActivity = () => {
   const [loading, setLoading] = useState(false);
+  const [catloading, setCatLoading] = useState(false);
   const [categoryList, setCategoryList] = useState<CategoryType[]>([]);
   const [expandedCategory, setExpandedCategory] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [categoryId, setCategoryId] = useState<number>(1);
+  const { setActiveModalId } = useAppContext();
 
   useEffect(() => {
     getCategoryList();
-  }, []);
+  }, [catloading]);
 
   const getCategoryList = async () => {
     setLoading(true);
@@ -30,12 +39,10 @@ const CreateCustomActivity = () => {
   };
 
   const toggleCategory = (categoryId: number, e?: React.MouseEvent) => {
-    // prevent row click conflicts if needed
     e?.stopPropagation();
     setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
   };
 
-  // Pagination Logic
   const totalPages = Math.ceil(categoryList.length / ITEMS_PER_PAGE);
   const displayedCategories = categoryList.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -58,6 +65,15 @@ const CreateCustomActivity = () => {
             <h1 className="text-3xl font-bold text-gray-900">
               Create Custom Activity
             </h1>
+            <motion.span
+              onClick={() => {
+                setActiveModalId("categoryModel");
+              }}
+              whileHover={{ scale: 0.9 }}
+              className="p-3 rounded-md text-white hover:bg-primaryGreen bg-primaryGreen/70 cursor-pointer font-bold flex gap-2"
+            >
+              Create Category <SquarePen />
+            </motion.span>
           </div>
           {loading ? (
             <Loader />
@@ -73,78 +89,94 @@ const CreateCustomActivity = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {displayedCategories.map((category) => (
-                    <React.Fragment key={category.id}>
-                      <tr
-                        className="cursor-pointer border-b hover:bg-gray-50"
-                        onClick={() => toggleCategory(category.id)}
+                  {categoryList.length === 0 ? (
+                    <tr className="">
+                      <td
+                        colSpan={4}
+                        className="p-32 border text-center text-gray-500"
                       >
-                        <td className="p-3 text-center">{category.id}</td>
-                        <td className="p-3">{category.name}</td>
-                        <td className="p-3 text-center">
-                          {category.description || "No description available"}
-                        </td>
-                        <td className="p-3 text-center">
-                          {category.activities ? category.activities.length : 0}
-                        </td>
-                      </tr>
-                      {expandedCategory === category.id && (
-                        <tr>
-                          <td colSpan={4} className="p-4 bg-gray-50">
-                            <div className="flex items-center justify-between gap-4">
-                              <div className="mb-2 text-lg font-semibold text-gray-700">
-                                Activities:
-                              </div>
-                              <button
-                                onClick={() =>
-                                  console.log("Add Activities clicked")}
-                                className="bg-primaryGreen text-white px-3 py-2 text-xs rounded-md hover:opacity-90 transition"
-                              >
-                                Add Activities
-                              </button>
-                            </div>
-                            {category.activities &&
-                            category.activities.length > 0 ? (
-                              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                {category.activities.map((activity) => (
-                                  <div
-                                    key={activity.id}
-                                    className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
-                                  >
-                                    <div className="font-bold text-gray-800 text-lg mb-1">
-                                      {activity.name}
-                                    </div>
-                                    <p className="text-gray-600 text-sm">
-                                      <span className="font-semibold">
-                                        Description:
-                                      </span>{" "}
-                                      {activity.description || "N/A"}
-                                    </p>
-                                    <p className="text-gray-600 text-sm ">
-                                      <span className="font-semibold">
-                                        Location:
-                                      </span>{" "}
-                                      {activity.location}
-                                    </p>
-                                    <p className="text-gray-600 text-sm">
-                                      <span className="font-semibold">
-                                        Price/Day:
-                                      </span>{" "}
-                                      $ {activity.price_per_day}
-                                    </p>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-gray-600">
-                                No activities available.
-                              </p>
-                            )}
+                        No categories available. Please create a category.
+                      </td>
+                    </tr>
+                  ) : (
+                    displayedCategories.map((category) => (
+                      <React.Fragment key={category.id}>
+                        <tr
+                          className="cursor-pointer border-b hover:bg-gray-50"
+                          onClick={() => toggleCategory(category.id)}
+                        >
+                          <td className="p-3 text-center">{category.id}</td>
+                          <td className="p-3">{category.name}</td>
+                          <td className="p-3 text-center">
+                            {category.description || "No description available"}
+                          </td>
+                          <td className="p-3 text-center">
+                            {category.activities
+                              ? category.activities.length
+                              : 0}
                           </td>
                         </tr>
-                      )}
-                    </React.Fragment>
-                  ))}
+                        {expandedCategory === category.id && (
+                          <tr>
+                            <td colSpan={4} className="p-4 bg-gray-50">
+                              <div className="flex items-center justify-between gap-4">
+                                <div className="mb-2 text-lg font-semibold text-gray-700">
+                                  Activities:
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    setCategoryId(category.id);
+
+                                    setActiveModalId("activityModel");
+                                  }}
+                                  className="bg-primaryGreen text-white px-3 py-2 text-xs rounded-md hover:opacity-90 transition"
+                                >
+                                  Add Activities
+                                </button>
+                              </div>
+                              {category.activities &&
+                              category.activities.length > 0 ? (
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                  {category.activities.map((activity) => (
+                                    <div
+                                      key={activity.id}
+                                      className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
+                                    >
+                                      <div className="font-bold text-gray-800 text-lg mb-1">
+                                        {activity.name}
+                                      </div>
+                                      <p className="text-gray-600 text-sm">
+                                        <span className="font-semibold">
+                                          Description:
+                                        </span>{" "}
+                                        {activity.description || "N/A"}
+                                      </p>
+                                      <p className="text-gray-600 text-sm ">
+                                        <span className="font-semibold">
+                                          Location:
+                                        </span>{" "}
+                                        {activity.location}
+                                      </p>
+                                      <p className="text-gray-600 text-sm">
+                                        <span className="font-semibold">
+                                          Price/Day:
+                                        </span>{" "}
+                                        $ {activity.price_per_day}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-gray-600">
+                                  No activities available.
+                                </p>
+                              )}
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    ))
+                  )}
                 </tbody>
               </table>
               {/* Pagination Buttons */}
@@ -179,6 +211,15 @@ const CreateCustomActivity = () => {
           )}
         </div>
       </div>
+
+      <CenterModal
+        children={<CreateTourCategoryForm reload={setCatLoading} />}
+        id={"categoryModel"}
+      />
+      <CenterModal
+        children={<CreateTourActivityForm catId={categoryId} />}
+        id={"activityModel"}
+      />
     </ServiceProviderTemplate>
   );
 };
