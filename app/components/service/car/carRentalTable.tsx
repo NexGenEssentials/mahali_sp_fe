@@ -215,7 +215,7 @@ const CarRentalTable: React.FC<CarRentalTableProps> = ({
                         <Pencil className="w-5 h-5" />
                       </button>
                       <Popconfirm
-                        title="Are you sure you want to delete this booking?"
+                        title="Are you sure you want to delete this Car?"
                         onConfirm={() => onDelete(car.id)}
                         okText="Yes"
                         cancelText="No"

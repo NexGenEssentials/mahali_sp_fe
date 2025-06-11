@@ -5,7 +5,6 @@ import {
   AddActivityTourPackageType,
   CategoriesResponse,
   CategoryType,
-  CountryResponseType,
   countryTourResponseType,
   CreateTourType,
   CustomeTourPackageType,
@@ -212,21 +211,38 @@ export const CreateCategories = async (
   packageId?: number
 ): Promise<{ success: boolean; message: string; data: CategoryType }> => {
   try {
-    const response = await fetch(
-      `${base_url}/categories/create/`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch(`${base_url}/categories/create/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(data),
+    });
 
     const result = await response.json();
     return result;
   } catch (error) {
+    throw error;
+  }
+};
+
+export const DeleteCategory = async (catId: number): Promise<boolean> => {
+  try {
+    const response = await fetch(`${base_url}/categories/${catId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.log("Something went wrong", { error });
     throw error;
   }
 };
@@ -245,13 +261,33 @@ export const CreateActivities = async (
     });
 
     const result = await response.json();
-   console.log("Activity created:", result);
+   
     return result;
   } catch (error) {
     throw error;
   }
 };
 
+export const DeleteActivities = async (actvId: number): Promise<boolean> => {
+  try {
+    const response = await fetch(`${base_url}/activities/${actvId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.log("Something went wrong", { error });
+    throw error;
+  }
+};
 // create tour flow
 
 export const CreateTourPackage = async (
@@ -268,7 +304,7 @@ export const CreateTourPackage = async (
     });
 
     const result = await response.json();
-   
+
     return result;
   } catch (error) {
     throw error;
@@ -312,7 +348,7 @@ export const CreateTourImages = async (
       },
       body: data,
     });
- 
+
     if (!response.ok) {
       return { success: false };
     }
@@ -329,16 +365,13 @@ export const DeleteTourPackage = async (
   packageId: number
 ): Promise<boolean> => {
   try {
-    const response = await fetch(
-      `${base_url}/tours/${packageId}/`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const response = await fetch(`${base_url}/tours/${packageId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     if (!response.ok) {
       return false;
     }

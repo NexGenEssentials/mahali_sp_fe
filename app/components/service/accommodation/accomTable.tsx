@@ -152,7 +152,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                       </button>
                      
                       <Popconfirm
-                        title="Are you sure you want to delete this booking?"
+                        title="Are you sure you want to delete this Accommodation?"
                         onConfirm={() => onDelete(a.id)}
                         okText="Yes"
                         cancelText="No"

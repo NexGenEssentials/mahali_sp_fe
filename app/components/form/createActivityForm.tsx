@@ -14,9 +14,13 @@ export interface ActivityFormData {
 
 interface CreateTourActivityFormProps {
   catId: number;
+  reload: (load: boolean) => void;
 }
 
-const CreateTourActivityForm = ({ catId }: CreateTourActivityFormProps) => {
+const CreateTourActivityForm = ({
+  catId,
+  reload,
+}: CreateTourActivityFormProps) => {
   const [formData, setFormData] = useState<ActivityFormData>({
     name: "",
     category_id: catId,
@@ -43,7 +47,7 @@ const CreateTourActivityForm = ({ catId }: CreateTourActivityFormProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (save) {
-      setSaveLoading;
+      setSaveLoading(true);
     } else {
       setLoading(true);
     }
@@ -51,6 +55,7 @@ const CreateTourActivityForm = ({ catId }: CreateTourActivityFormProps) => {
       const result = await CreateActivities(formData);
       if (result.success) {
         message.success("Activity created successfully:");
+        reload(true);
         if (save) {
           setActiveModalId(null);
         }
@@ -61,7 +66,7 @@ const CreateTourActivityForm = ({ catId }: CreateTourActivityFormProps) => {
       console.error("Error submitting form:", error);
     } finally {
       setLoading(false);
-
+      setSaveLoading(false);
       setFormData({
         name: "",
         category_id: catId,

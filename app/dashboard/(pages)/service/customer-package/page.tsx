@@ -1,5 +1,9 @@
 "use client";
-import { getTourCategories } from "@/app/api/tour/action";
+import {
+  DeleteActivities,
+  DeleteCategory,
+  getTourCategories,
+} from "@/app/api/tour/action";
 import CreateTourActivityForm from "@/app/components/form/createActivityForm";
 import CreateTourCategoryForm from "@/app/components/form/createCategory";
 import CenterModal from "@/app/components/model/centerModel";
@@ -7,6 +11,7 @@ import Loader from "@/app/components/skeleton/loader";
 import { useAppContext } from "@/app/context";
 import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
 import { CategoryType } from "@/app/types/service/tour";
+import { message } from "antd";
 import { motion } from "framer-motion";
 import { SquarePen } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -15,6 +20,7 @@ const ITEMS_PER_PAGE = 10;
 
 const CreateCustomActivity = () => {
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [catloading, setCatLoading] = useState(false);
   const [categoryList, setCategoryList] = useState<CategoryType[]>([]);
   const [expandedCategory, setExpandedCategory] = useState<number | null>(null);
@@ -44,7 +50,7 @@ const CreateCustomActivity = () => {
   };
 
   const totalPages = Math.ceil(categoryList.length / ITEMS_PER_PAGE);
-  const displayedCategories = categoryList.slice(
+  let displayedCategories = categoryList.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
@@ -56,6 +62,43 @@ const CreateCustomActivity = () => {
   const prevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
+
+  const handleDeleteCategory = async (id: number) => {
+    try {
+      const result = await DeleteCategory(id);
+      if (result) {
+        message.success("Category Deleted Successfully");
+        setCategoryList((prev) => prev.filter((cat) => cat.id !== id));
+      } else {
+        message.error("Category Not Found");
+      }
+    } catch (error) {
+      message.error("Something went wrong");
+    }
+  };
+
+  const handleDeleteActivity = async (id: number) => {
+    setDeleteLoading(true);
+    try {
+      const result = await DeleteActivities(id);
+      if (result) {
+        message.success("Activity Deleted Successfully");
+        setCategoryList((prev) =>
+          prev.map((cat) => ({
+            ...cat,
+            activities: cat.activities?.filter((act) => act.id !== id) || [],
+          }))
+        );
+      } else {
+        message.error("Activity Not Found");
+      }
+    } catch (error) {
+      message.error("Something went wrong");
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
 
   return (
     <ServiceProviderTemplate>
@@ -87,14 +130,13 @@ const CreateCustomActivity = () => {
                     <th className="p-3 text-left">Description</th>
                     <th className="p-3 text-center">Total Activity</th>
                     <th className="p-3 text-center">Action</th>
-
                   </tr>
                 </thead>
                 <tbody>
                   {categoryList.length === 0 ? (
                     <tr className="">
                       <td
-                        colSpan={4}
+                        colSpan={5}
                         className="p-32 border text-center text-gray-500"
                       >
                         No categories available. Please create a category.
@@ -118,7 +160,11 @@ const CreateCustomActivity = () => {
                               : 0}
                           </td>
                           <td className="flex items-center justify-center p-2">
-                            <button className="bg-red-500 text-white p-2 text-sm rounded-lg">
+                            <button
+                              title="Delete This Category"
+                              onClick={() => handleDeleteCategory(category.id)}
+                              className="bg-red-500 text-white p-2 text-sm rounded-lg"
+                            >
                               Delete
                             </button>
                           </td>
@@ -133,7 +179,6 @@ const CreateCustomActivity = () => {
                                 <button
                                   onClick={() => {
                                     setCategoryId(category.id);
-
                                     setActiveModalId("activityModel");
                                   }}
                                   className="bg-primaryGreen text-white px-3 py-2 text-xs rounded-md hover:opacity-90 transition"
@@ -141,17 +186,31 @@ const CreateCustomActivity = () => {
                                   Add Activities
                                 </button>
                               </div>
-                              {category.activities &&
-                              category.activities.length > 0 ? (
-                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                              {deleteLoading ? (
+                                <Loader />
+                              ) : category.activities &&
+                                category.activities.length > 0 ? (
+                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-4">
                                   {category.activities.map((activity) => (
                                     <div
                                       key={activity.id}
-                                      className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
+                                      className="relative bg-white p-4 rounded-lg shadow hover:shadow-md transition"
                                     >
                                       <div className="font-bold text-gray-800 text-lg mb-1">
                                         {activity.name}
                                       </div>
+
+                                      <div
+                                        onClick={() =>
+                                          handleDeleteActivity(activity.id)
+                                        }
+                                        title="Delete Activity"
+                                        className="bg-red-600 hover:bg-red-400 duration-200 cursor-pointer text-white text-sm w-4 h-4 p-3 flex items-center justify-center rounded-full absolute -top-1 right-0"
+                                      >
+                                        {" "}
+                                        X{" "}
+                                      </div>
+
                                       <p className="text-gray-600 text-sm">
                                         <span className="font-semibold">
                                           Description:
@@ -224,7 +283,9 @@ const CreateCustomActivity = () => {
         id={"categoryModel"}
       />
       <CenterModal
-        children={<CreateTourActivityForm catId={categoryId} />}
+        children={
+          <CreateTourActivityForm catId={categoryId} reload={setCatLoading} />
+        }
         id={"activityModel"}
       />
     </ServiceProviderTemplate>

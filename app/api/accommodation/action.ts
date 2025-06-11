@@ -124,6 +124,8 @@ export const DeleteAccommodation = async (id: number): Promise<boolean> => {
   }
 };
 
+
+
 export type facility = {
   id: number;
   name: string;
@@ -304,5 +306,25 @@ export const CreateRoomImage = async (
     return { success: true };
   } catch (error) {
     return { success: false };
+  }
+};
+
+export const DeleteRoomType = async (id: number): Promise<boolean> => {
+  try {
+    const response = await fetch(`${base_url}/roomtype/${id}/delete/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+   
+    if (response.ok) {
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    throw error;
   }
 };
