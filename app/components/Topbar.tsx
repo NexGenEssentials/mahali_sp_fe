@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { User, getUserProfile } from "../api/user/action";
+import { User, getUser, getUserProfile } from "../api/user/action";
 import { Avatar, Dropdown, Menu } from "antd";
 
 export default function Topbar() {
@@ -18,6 +18,7 @@ export default function Topbar() {
   }, []);
 
   const handleGetuser = async () => {
+    // const resulti = await getUser();
     const result = await getUserProfile();
     if (result) {
       setUser(result);

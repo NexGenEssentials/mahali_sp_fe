@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input, Textarea } from "../../form/inputField";
 import { useAppContext } from "@/app/context";
-import { X } from "lucide-react";
+import { ImagePlus, X } from "lucide-react";
 import CenterModal from "../../model/centerModel";
 import CreateFacilities from "./facility";
 import message from "antd/es/message";
@@ -14,11 +14,11 @@ import {
   CreateAccomodation,
 } from "@/app/api/accommodation/action";
 import { useRouter } from "next/navigation";
-
+import { useDropzone } from "react-dropzone";
 
 const accommSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
+  description: z.string().min(5, "Description must be at least 5 characters"),
   location: z.string().min(1, "Location is required"),
   address: z.string().min(1, "Address is required"),
   latitude: z.number().min(-90).max(90),
@@ -38,7 +38,7 @@ const accommSchema = z.object({
   additional_rules: z.string().optional(),
   is_active: z.boolean(),
   is_featured: z.boolean(),
-  image: z.instanceof(File).nullable(),
+  image: z.instanceof(File).nullable().optional(),
 });
 
 export type AccommFormData = z.infer<typeof accommSchema>;
@@ -50,7 +50,6 @@ const AccommodationForm: React.FC = () => {
     { id: number; name: string }[]
   >([]);
   const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
   const {
     register,
     handleSubmit,
@@ -69,19 +68,31 @@ const AccommodationForm: React.FC = () => {
     },
   });
 
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: { "image/*": [".jpeg", ".jpg", ".png", ".webp"] },
+    multiple: true,
+    onDrop: (acceptedFiles) => {
+      const newPreviews = acceptedFiles.map((file) =>
+        URL.createObjectURL(file)
+      );
+      setImages((prev) => [...prev, ...acceptedFiles]);
+      setImagePreviews((prev) => [...prev, ...newPreviews]);
+    },
+  });
+
   const onSubmit = async (data: AccommFormData) => {
     setLoading(true);
     try {
       const facilityIds = selectedFacilities.map((f) => f.id);
-
-      const imageData = new FormData();
 
       const formData: AccommFormData = {
         ...data,
         image: null,
         facility_ids: facilityIds,
       };
-      
+
       const result = await CreateAccomodation(formData);
 
       if (!result) {
@@ -91,14 +102,13 @@ const AccommodationForm: React.FC = () => {
       if (result.success) {
         message.success("Accommodation created successfully!");
         router.push("/dashboard/service");
-        if (image) {
-          imageData.append("image", image);
-          imageData.append("accommodation", result.data.id.toString());
-        }
-        const response = await CreateAccommodationImage(
-          imageData,
-          
-        );
+
+        const formData = new FormData();
+        formData.append("accommodation", result.data.id.toString());
+        images.forEach((img) => {
+          formData.append("image", img);
+        });
+        const response = await CreateAccommodationImage(formData);
         if (response.success) {
           message.success("Image uploaded successfully!");
         } else {
@@ -108,7 +118,19 @@ const AccommodationForm: React.FC = () => {
     } catch (error) {
       console.error("Error creating accommodation:", error);
       message.error("Failed to create accommodation. Please try again.");
+    } finally {
+      setImages([]);
+      setImagePreviews([]);
     }
+  };
+
+  const removeImage = (index: number) => {
+    const updatedImages = [...images];
+    const updatedPreviews = [...imagePreviews];
+    updatedImages.splice(index, 1);
+    updatedPreviews.splice(index, 1);
+    setImages(updatedImages);
+    setImagePreviews(updatedPreviews);
   };
 
   return (
@@ -278,29 +300,48 @@ const AccommodationForm: React.FC = () => {
             )}
           </div>
 
-          {/* create image section */}
+          {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Add Image
-            </label>
-            <input
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  setImage(file);
-                  setValue("image", file);
-                }
-              }}
-              name="image"
-              id="image"
-              placeholder="Upload Image"
-              type="file"
-              accept="image/*"
-              className="input input-bordered w-full"
-            />
-            <p className="text-gray-500 text-sm mt-1">
-              Upload an image for the accommodation (optional).
-            </p>
+            <h3 className="font-semibold text-gray-700 mb-2">Room Images</h3>
+
+            <div
+              {...getRootProps()}
+              className={`border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition ${
+                isDragActive
+                  ? "border-blue-400 bg-blue-50"
+                  : "hover:border-primaryGreen"
+              }`}
+            >
+              <input {...getInputProps()} />
+              <ImagePlus className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+              <p className="text-sm text-gray-600">
+                Drag & drop or click to upload (multiple images)
+              </p>
+            </div>
+
+            {imagePreviews.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                {imagePreviews.map((src, index) => (
+                  <div
+                    key={index}
+                    className="relative group aspect-video rounded overflow-hidden"
+                  >
+                    <img
+                      src={src}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => removeImage(index)}
+                      type="button"
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
