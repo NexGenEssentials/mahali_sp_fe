@@ -15,7 +15,7 @@ export default function Topbar() {
 
   useEffect(() => {
     handleGetuser();
-  }, [user]);
+  }, []);
 
   const handleGetuser = async () => {
     const result = await getUserProfile();
@@ -23,8 +23,6 @@ export default function Topbar() {
       setUser(result);
     }
   };
-
- 
 
   const userInitial = user.full_name?.charAt(0)?.toUpperCase() || "?";
 

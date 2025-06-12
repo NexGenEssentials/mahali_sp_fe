@@ -4,7 +4,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload } from "lucide-react";
+
+import { useDropzone } from "react-dropzone";
+import { X, ImagePlus } from "lucide-react";
 import { Input, Textarea } from "@/app/components/form/inputField";
 import {
   CreateRoomImage,
@@ -36,8 +38,8 @@ interface CreateRoomTypeProps {
 
 const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
   const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const router = useRouter();
   const {
     register,
@@ -61,6 +63,18 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
       includes: "",
       image: null,
       is_available: true,
+    },
+  });
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: { "image/*": [".jpeg", ".jpg", ".png", ".webp"] },
+    multiple: true,
+    onDrop: (acceptedFiles) => {
+      const newPreviews = acceptedFiles.map((file) =>
+        URL.createObjectURL(file)
+      );
+      setImages((prev) => [...prev, ...acceptedFiles]);
+      setImagePreviews((prev) => [...prev, ...newPreviews]);
     },
   });
 
@@ -91,15 +105,13 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
 
         const formData = new FormData();
         formData.append("room_type", result.data.id.toString());
-        if (image) {
-          formData.append("image", image);
-        }
+        images.forEach((img) => {
+          formData.append("image", img);
+        });
 
         const response = await CreateRoomImage(formData);
         if (response.success) {
           message.success("Room image uploaded successfully!");
-          setImage(null);
-          setImagePreview(null);
           router.push(`/dashboard/service/accommodation/${params.id}`);
         } else {
           message.error("Room created, but image upload failed.");
@@ -112,21 +124,18 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
       message.error("Failed to create room. Please try again.");
     } finally {
       setLoading(false);
+      setImages([]);
+      setImagePreviews([]);
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setValue("image", file);
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const removeImage = (index: number) => {
+    const updatedImages = [...images];
+    const updatedPreviews = [...imagePreviews];
+    updatedImages.splice(index, 1);
+    updatedPreviews.splice(index, 1);
+    setImages(updatedImages);
+    setImagePreviews(updatedPreviews);
   };
 
   return (
@@ -263,45 +272,49 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
               </div>
 
               {/* Image Upload */}
-              <div className="space-y-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Upload Room Image
-                    </label>
-                    <div className="flex items-center justify-center w-full">
-                      <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                          <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">
-                              Click to upload
-                            </span>{" "}
-                            or drag and drop
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            PNG, JPG, GIF up to 10MB
-                          </p>
-                        </div>
-                        <input
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          onChange={handleImageChange}
-                        />
-                      </label>
-                    </div>
-                    {imagePreview && (
-                      <div className="mt-4">
-                        <img
-                          src={imagePreview}
-                          alt="Room preview"
-                          className="w-32 h-32 object-cover rounded-lg border border-gray-300"
-                        />
-                      </div>
-                    )}
-                  </div>
+              <div>
+                <h3 className="font-semibold text-gray-700 mb-2">
+                  Room Images
+                </h3>
+
+                <div
+                  {...getRootProps()}
+                  className={`border-2 border-dashed rounded-md p-6 text-center cursor-pointer transition ${
+                    isDragActive
+                      ? "border-blue-400 bg-blue-50"
+                      : "hover:border-primaryGreen"
+                  }`}
+                >
+                  <input {...getInputProps()} />
+                  <ImagePlus className="mx-auto h-8 w-8 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-600">
+                    Drag & drop or click to upload (multiple images)
+                  </p>
                 </div>
+
+                {imagePreviews.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                    {imagePreviews.map((src, index) => (
+                      <div
+                        key={index}
+                        className="relative group aspect-video rounded overflow-hidden"
+                      >
+                        <img
+                          src={src}
+                          alt={`Preview ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          onClick={() => removeImage(index)}
+                          type="button"
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Availability */}

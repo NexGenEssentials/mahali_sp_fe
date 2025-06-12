@@ -124,8 +124,6 @@ export const DeleteAccommodation = async (id: number): Promise<boolean> => {
   }
 };
 
-
-
 export type facility = {
   id: number;
   name: string;
@@ -297,8 +295,7 @@ export const CreateRoomImage = async (
       },
       body: roomImage,
     });
-
-    const data = await response.json();
+    
     if (!response.ok) {
       return { success: false };
     }
@@ -318,7 +315,7 @@ export const DeleteRoomType = async (id: number): Promise<boolean> => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-   
+
     if (response.ok) {
       return true;
     }

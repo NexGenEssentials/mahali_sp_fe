@@ -127,6 +127,7 @@ export type TopService = {
   revenue: number;
   service_type: string;
 };
+
 export const getAdminBookingByService = async (): Promise<{
   bookings_by_service_type: TopService[];
 }> => {
