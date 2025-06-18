@@ -33,11 +33,11 @@ const CustomPackage = () => {
 
   const handleApprove = async (packageId: number) => {
     try {
-      const result = await DeleteCustomPackage(packageId);
-      if (result)
-        setFilteredCustomPack((prev) =>
-          prev.filter((booking) => booking.id !== packageId)
-        );
+      // const result = await DeleteCustomPackage(packageId);
+      // if (true)
+      //   setFilteredCustomPack((prev) =>
+      //     prev.filter((booking) => booking.id !== packageId)
+      //   );
     } catch (error) {
       console.error("Error approving booking:", error);
     }

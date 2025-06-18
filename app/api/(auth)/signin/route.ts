@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
     // if (data.access && role === "admin") {
     if (data.access && (role === "service_provider" || role === "admin")) {
-      (await cookies()).set("accessToken", data.access);
+      cookies().set("accessToken", data.access);
 
       return NextResponse.json(
         { message: "You have succesfull logged in", user: data },
