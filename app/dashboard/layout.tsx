@@ -1,15 +1,14 @@
-'use client'
+"use client";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import { useAppContext } from "../context";
 
-
-export default function RootLayout({
+export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-      const { expanded } = useAppContext();
+  const { expanded } = useAppContext();
   return (
     <div>
       <Sidebar />

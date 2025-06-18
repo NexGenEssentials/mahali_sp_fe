@@ -261,7 +261,7 @@ export const CreateActivities = async (
     });
 
     const result = await response.json();
-   
+
     return result;
   } catch (error) {
     throw error;
@@ -303,6 +303,7 @@ export const CreateTourPackage = async (
       body: JSON.stringify(data),
     });
 
+    console.log(response);
     const result = await response.json();
 
     return result;

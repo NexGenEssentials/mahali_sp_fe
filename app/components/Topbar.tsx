@@ -18,7 +18,6 @@ export default function Topbar() {
   }, []);
 
   const handleGetuser = async () => {
-    // const resulti = await getUser();
     const result = await getUserProfile();
     if (result) {
       setUser(result);
