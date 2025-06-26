@@ -113,7 +113,7 @@ export const DeleteAccommodation = async (id: number): Promise<boolean> => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    console.log(response);
+
     if (response.ok) {
       return true;
     }
@@ -295,7 +295,7 @@ export const CreateRoomImage = async (
       },
       body: roomImage,
     });
-    
+
     if (!response.ok) {
       return { success: false };
     }

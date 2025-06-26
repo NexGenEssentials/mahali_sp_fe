@@ -101,7 +101,6 @@ const AccommodationForm: React.FC = () => {
       }
       if (result.success) {
         message.success("Accommodation created successfully!");
-        router.push("/dashboard/service");
 
         const formData = new FormData();
         formData.append("accommodation", result.data.id.toString());
@@ -111,6 +110,7 @@ const AccommodationForm: React.FC = () => {
         const response = await CreateAccommodationImage(formData);
         if (response.success) {
           message.success("Image uploaded successfully!");
+          router.push("/dashboard/service");
         } else {
           message.error("Failed to upload image.");
         }
