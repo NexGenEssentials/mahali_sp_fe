@@ -3,7 +3,13 @@ import { useAppContext } from "@/app/context";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { ReactNode } from "react";
 
-const CenterModal = ({children, id,}: {children: ReactNode; id: string | null | undefined;}) => {
+const CenterModal = ({
+  children,
+  id,
+}: {
+  children: ReactNode;
+  id: string | null | undefined;
+}) => {
   const { activeModalId, setActiveModalId } = useAppContext();
 
   const closeModal = () => {
@@ -24,7 +30,9 @@ const CenterModal = ({children, id,}: {children: ReactNode; id: string | null | 
           onClick={closeModal}
         >
           <div
-            className={`bg-white rounded-lg shadow-lg p-4 sm:p-8 max-md:h-fit overflow-y-scroll hide-scrollbar md:max-w-fit w-full transform transition-all duration-500 ease-out ${
+            className={`bg-white rounded-lg shadow-lg p-4 sm:p-8 max-md:h-fit overflow-y-scroll hide-scrollbar ${
+              activeModalId?.includes("edit") ? "md:max-w-full" : "md:max-w-fit"
+            } w-full transform transition-all duration-500 ease-out ${
               activeModalId === id ? "animate-slideUp" : "animate-slideDown"
             }`}
             onClick={handleModalClick}

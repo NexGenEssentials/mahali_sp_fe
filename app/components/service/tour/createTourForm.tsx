@@ -15,7 +15,7 @@ import { MdNavigateNext } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import { getAllCountry } from "@/app/api/destinations/action";
 
-const tourFormSchema = z.object({
+export const tourFormSchema = z.object({
   title: z.string().min(1),
   price: z.string().min(1),
   description: z.string().min(1),

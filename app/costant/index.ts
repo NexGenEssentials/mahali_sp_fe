@@ -182,3 +182,28 @@ export const TOPREVENUE = [{
   total_revenue: 2600,
   service_type: "Custom Package",
 }];
+
+  export const carBrands = [
+    "Toyota",
+    "Honda",
+    "Ford",
+    "Chevrolet",
+    "Nissan",
+    "Hyundai",
+    "Kia",
+    "Volkswagen",
+    "BMW",
+    "Mercedes-Benz",
+    "Audi",
+    "Lexus",
+    "Mazda",
+    "Subaru",
+    "Jeep",
+    "Dodge",
+    "GMC",
+    "Tesla",
+    "Volvo",
+    "Porsche",
+    "Jaguar",
+    "Land Rover",
+  ];

@@ -45,7 +45,7 @@ const AdminAccommodationTable = () => {
   };
 
   const handleUpdate = (id: number) => {
-    console.log("Update tour package:", id);
+    console.log("Update accomodation:", id);
   };
 
   const handleView = (id: number, category: string) => {

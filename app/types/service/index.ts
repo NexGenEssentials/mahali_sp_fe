@@ -69,6 +69,7 @@ export type CarDetails = {
   price_per_day: string;
   is_available: boolean;
   description: string;
+  location: string;
 };
 
 export type Feature = {
@@ -84,12 +85,12 @@ export type AllFeature = {
 
 export type SingleCarType = {
   car: StaticImageData;
-  gallery: StaticImageData[] | undefined;
+  gallery: string[] | undefined;
   spec: any;
   id: number;
   features: Feature[];
   first_image: StaticImageData;
-  images: StaticImageData[];
+  images: string[];
   related_cars: Car[];
   owner: number;
   name: string;
@@ -105,6 +106,23 @@ export type SingleCarType = {
   is_available: boolean;
   status: string;
   description: string;
+  location: string;
+};
+export type EditSingleCarType = {
+  name: string;
+  brand: string;
+  category: string;
+  year: number;
+  mileage: number;
+  fuel_type: string;
+  transmission: string;
+  seats: number;
+  luggage_capacity: number;
+  price_per_day: string;
+  is_available: boolean;
+  description: string;
+  location: string;
+  owner: number;
 };
 
 export interface BookingDetails {

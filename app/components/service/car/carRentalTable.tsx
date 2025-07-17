@@ -50,7 +50,7 @@ interface CarData {
 interface CarRentalTableProps {
   data: CarResponse;
   onDelete: (id: number) => void;
-  onUpdate: (car: CarData) => void;
+  onUpdate: (car: number) => void;
   onView: (car: number) => void;
 }
 
@@ -208,7 +208,7 @@ const CarRentalTable: React.FC<CarRentalTableProps> = ({
                         <Eye className="w-5 h-5" />
                       </button>
                       <button
-                        // onClick={() => onUpdate(car)}
+                        onClick={() => onUpdate(car.id)}
                         className="text-indigo-600 hover:text-indigo-900"
                         title="Edit"
                       >

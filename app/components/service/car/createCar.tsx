@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CarImages } from "./addImages";
 import { CreateCar } from "@/app/api/carRental/action";
 import { CarDetails } from "@/app/types/service";
-import { carTypesData } from "@/app/costant";
+import { carBrands, carTypesData } from "@/app/costant";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { useRouter } from "next/navigation";
 
@@ -23,17 +23,14 @@ export default function AddVehicleForm() {
     price_per_day: "",
     is_available: true,
     description: "",
+    location: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [carId, setCarId] = useState(1);
   const router = useRouter();
-    const carBrands = [
-    "Toyota", "Honda", "Ford", "Chevrolet", "Nissan", "Hyundai", "Kia", "Volkswagen",
-    "BMW", "Mercedes-Benz", "Audi", "Lexus", "Mazda", "Subaru", "Jeep", "Dodge",
-    "GMC", "Tesla", "Volvo", "Porsche", "Jaguar", "Land Rover"
-  ];
+
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -149,6 +146,7 @@ export default function AddVehicleForm() {
               </div>
 
               {/* Category Select */}
+
               <div>
                 <label
                   htmlFor="category"
@@ -174,26 +172,29 @@ export default function AddVehicleForm() {
                   ))}
                 </select>
               </div>
-
-              {/* <div>
+              {/* location */}
+              <div>
                 <label
-                  htmlFor="owner"
+                  htmlFor="location"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Owner Id
+                  location
                 </label>
                 <input
-                  name="owner"
-                  type="number"
-                  value={formData.owner}
+                  name="location"
+                  type="string"
+                  value={formData.location}
                   onChange={handleChange}
                   className="input"
+                  placeholder="Enter vehicle location"
                 />
-              </div> */}
+              </div>
+
+              
             </div>
             <>
               <label
-                htmlFor="owner"
+                htmlFor="descritpion"
                 className="block text-sm font-medium text-gray-700"
               >
                 Description

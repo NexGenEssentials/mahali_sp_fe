@@ -9,10 +9,12 @@ import {
   CreateTourType,
   CustomeTourPackageType,
   CustomPackagesResponse,
+  EditTourPackageType,
   SingleTourResponseType,
   TourPlanType,
   TourResponseType,
 } from "@/app/types/service/tour";
+import { tr } from "framer-motion/client";
 import { cookies } from "next/headers";
 
 const base_url = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
@@ -303,7 +305,6 @@ export const CreateTourPackage = async (
       body: JSON.stringify(data),
     });
 
-    console.log(response);
     const result = await response.json();
 
     return result;
@@ -312,8 +313,32 @@ export const CreateTourPackage = async (
   }
 };
 
+export const EditTourPackage = async (
+  data: EditTourPackageType,
+  id: number
+): Promise<SingleTourResponseType> => {
+  try {
+    const response = await fetch(`${base_url}/tours/${id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const CreateTourPlans = async (
-  data: TourPlanType,
+  data: TourPlanType[],
   tourId: number
 ): Promise<{ success: boolean }> => {
   try {
@@ -334,6 +359,26 @@ export const CreateTourPlans = async (
     return { success: true };
   } catch (error) {
     return { success: false };
+  }
+};
+
+export const getTourPlans = async (
+  tourId: number
+): Promise<{ success: boolean; data: TourPlanType }> => {
+  try {
+    const response = await fetch(`${base_url}/tours/plans/${tourId}/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const result = await response.json();
+   
+    return result;
+  } catch (error) {
+    throw error;
   }
 };
 

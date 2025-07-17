@@ -1,34 +1,19 @@
 "use client";
-
+import React, { useEffect, useState } from "react";
+import { TourPlan, tourPlanSchema } from "./addTourPlan";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useState } from "react";
-import { message } from "antd";
+import message from "antd/es/message";
 import { Input, Textarea } from "../../form/inputField";
 import { motion } from "framer-motion";
-import { CreateTourPackage } from "@/app/api/tour/action";
-import { TourFormSchema } from "./createTourForm";
+import { CreateTourPlans, getTourPlans } from "@/app/api/tour/action";
+import { TourPlanType } from "@/app/types/service/tour";
+import Loader from "../../skeleton/loader";
+import { pre } from "framer-motion/client";
 
-export const tourPlanSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  inclusion: z.string().min(1, "Inclusion is required"),
-  accommodation: z.string().min(1, "Accommodation is required"),
-});
-
-export type TourPlan = z.infer<typeof tourPlanSchema>;
-
-export default function AddTourPlans({
-  data,
-  setStep,
-  setId,
-}: {
-  data: TourFormSchema;
-  setStep: (value: number) => void;
-  setId: (value: number) => void;
-}) {
-  const [tourPlans, setTourPlans] = useState<TourPlan[]>([]);
+const EditTourPlan = ({ id }: { id: number }) => {
+  const [tourPlans, setTourPlans] = useState<TourPlanType[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -46,6 +31,31 @@ export default function AddTourPlans({
     },
   });
 
+  useEffect(() => {
+    const fetchTourPlans = async () => {
+      try {
+        const data = await getTourPlans(id);
+
+        if (data) {
+          if ('title' in data && 'description' in data && 'inclusion' in data && 'accommodation' in data) {
+            setTourPlans(prev => [...prev, data as TourPlanType]);
+          } else {
+            console.error("Invalid data format:", data);
+            message.error("Failed to load tour plans due to invalid data format.");
+          }
+          setLoading(false);
+        } else {
+          message.error("Failed to load tour plans.");
+        }
+      } catch (error) {
+        console.error(error);
+        message.error("Something went wrong while fetching tour plans.");
+      }
+    };
+
+    fetchTourPlans();
+  }, []);
+
   const handleAddPlan = (data: TourPlan) => {
     setTourPlans((prev) => [...prev, data]);
     reset();
@@ -60,16 +70,9 @@ export default function AddTourPlans({
     }
 
     try {
-      const result = await CreateTourPackage({
-        ...data,
-        tour_plans: tourPlans,
-      });
-   
+      const result = await CreateTourPlans(tourPlans, id);
       if (result.success) {
-        setId(result.data.id);
-        message.success("Tour submitted successfully!");
-        setTourPlans([]);
-        setStep(3);
+        message.success("Tour Plan Added Successfully!");
       }
     } catch (err) {
       message.error("Something went wrong");
@@ -78,9 +81,16 @@ export default function AddTourPlans({
     }
   };
 
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-[80vh] min-w-60">
+        <Loader />
+      </div>
+    );
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg space-y-6">
-      <h2 className="text-2xl font-bold">Create Tour Plans</h2>
+      <h2 className="text-2xl font-bold">Edit Plans</h2>
 
       <form
         onSubmit={handleSubmit(handleAddPlan)}
@@ -143,7 +153,6 @@ export default function AddTourPlans({
       )}
 
       <div className="w-full flex items-center justify-end">
-   
         <motion.button
           whileTap={{ scale: 0.9 }}
           type="button"
@@ -156,4 +165,6 @@ export default function AddTourPlans({
       </div>
     </div>
   );
-}
+};
+
+export default EditTourPlan;

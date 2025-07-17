@@ -3,6 +3,7 @@ import {
   AllFeature,
   CarDetails,
   CarResponse,
+  EditSingleCarType,
   SingleCarType,
 } from "@/app/types/service";
 import { cookies } from "next/headers";
@@ -39,6 +40,37 @@ export const CreateCar = async (
   }
 };
 
+export const EditCar = async (
+  carId: number,
+  carDetails: EditSingleCarType
+): Promise<{
+  status: string;
+  message: string;
+  data: {
+    id: number;
+  };
+}> => {
+  try {
+    const response = await fetch(`${base_url}/cars/${carId}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(carDetails),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const CreateCarImages = async (
   carImages: FormData,
   carId: number
@@ -46,6 +78,30 @@ export const CreateCarImages = async (
   try {
     const response = await fetch(`${base_url}/cars/${carId}/images/`, {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: carImages,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return { success: false };
+    }
+
+    return { success: true };
+  } catch (error) {
+    return { success: false };
+  }
+};
+
+export const EditCarImages = async (
+  carImages: FormData,
+  carId: number
+): Promise<{ success: boolean }> => {
+  try {
+    const response = await fetch(`${base_url}/cars/${carId}/images/`, {
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -247,9 +303,7 @@ export const getCarAvailabilty = async (
   }
 };
 
-export const DeleteCar = async (
-  carId: number
-): Promise<boolean> => {
+export const DeleteCar = async (carId: number): Promise<boolean> => {
   try {
     const response = await fetch(`${base_url}/cars/${carId}/`, {
       method: "DELETE",

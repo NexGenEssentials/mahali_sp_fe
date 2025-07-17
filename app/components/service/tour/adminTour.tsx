@@ -54,11 +54,11 @@ const handleDelete = async (id: number) => {
 };
 
   const handleUpdate = (tourPackage: number) => {
-    console.log("Update tour package:", tourPackage);
+   router.push(`/dashboard/service/tour/${tourPackage}`);
   };
 
   const handleView = (tourPackage: number) => {
-    router.push(`/packages/${tourPackage}`);
+    router.push(`/dashboard/service/tour/${tourPackage}`);
   };
 
   return (

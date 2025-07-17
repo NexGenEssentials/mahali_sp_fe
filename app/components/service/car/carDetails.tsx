@@ -30,6 +30,7 @@ const CarDetails = ({ carId }: { carId: number }) => {
     is_available: false,
     status: "",
     description: "",
+    location:"",
   });
   const [loading, setloading] = useState(true);
 

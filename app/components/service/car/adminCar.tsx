@@ -68,8 +68,8 @@ function AdminCarRentalApp() {
     }
   };
 
-  const handleUpdate = (car: any) => {
-    console.log("Update car:", car);
+  const handleUpdate = (id: number) => {
+    router.push(`/dashboard/service/car/${id}`);
   };
 
   const handleView = (id: number) => {

@@ -41,6 +41,20 @@ export type TourPackageType = {
   related_packages: RelatedPackage[];
   images: [];
 };
+export type EditTourPackageType = {
+  title: string;
+  description: string;
+  location: string;
+  best_time_to_visit: string;
+  duration_days: string;
+  duration_nights: number;
+  min_people: number;
+  max_people: number;
+  rating: number;
+  price: string;
+  is_active: boolean;
+  country: number;
+};
 
 export type SingleTourResponseType = {
   success: boolean;
@@ -168,7 +182,7 @@ export type CreateTourType = {
   min_people: number;
   max_people: number;
   country_id: number;
-  owner?:string;
+  owner?: string;
   rating?: number;
   tour_plans?: TourPlanType[];
 };
