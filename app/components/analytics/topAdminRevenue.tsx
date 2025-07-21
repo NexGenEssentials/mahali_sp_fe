@@ -46,7 +46,7 @@ const TopAdminRevenueList: FC<TopCustomersListProps> = ({ revenue }) => {
               <div className="text-right space-y-1">
                 <p className="text-sm text-gray-800">Total Spent</p>
                 <p className="text-sm text-gray-800 font-bold text-center">
-                  {revenue.total_spent || 0}
+                  $ {Number(revenue?.total_spent).toLocaleString() || 0}
                 </p>
               </div>
             </li>

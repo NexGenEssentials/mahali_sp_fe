@@ -138,7 +138,7 @@ const CustomPackageCard: React.FC<Props> = ({
         )}
       </div>
 
-      <button
+      {/* <button
         onClick={() => onApprove(customPackage.id)}
         className="flex items-center justify-center mt-6 border border-primaryGreen text-defaultGreen hover:bg-primaryGreen hover:text-white font-bold py-3 rounded-xl transition-all duration-300"
       >
@@ -149,7 +149,7 @@ const CustomPackageCard: React.FC<Props> = ({
           height="20"     
           className="inline-block ml-2"
         />
-      </button>
+      </button> */}
     </div>
   );
 };
