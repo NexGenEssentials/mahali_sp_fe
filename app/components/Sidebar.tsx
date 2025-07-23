@@ -134,7 +134,11 @@ export default function Sidebar() {
       <div className="flex flex-col justify-between h-[85%]">
         <ul className="mt-4 space-y-4 px-4">
           {SidebarItems.map((item, index) => {
-            const active = pathname.includes(item.link);
+            const fullPath =
+              item.link === ""
+                ? "/dashboard"
+                : `/dashboard/${item.link.toLowerCase()}`;
+            const active = pathname === fullPath;
             return (
               <li
                 onClick={() =>
