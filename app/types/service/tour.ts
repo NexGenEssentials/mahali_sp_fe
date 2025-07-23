@@ -31,7 +31,7 @@ export type TourPackageType = {
   min_people: number;
   max_people: number;
   rating: number;
-  price: string;
+  prices: PriceItemType[];
   main_image: StaticImageData | null;
   is_active: boolean;
   created_at: string;
@@ -41,6 +41,7 @@ export type TourPackageType = {
   related_packages: RelatedPackage[];
   images: [];
 };
+
 export type EditTourPackageType = {
   title: string;
   description: string;
@@ -54,6 +55,7 @@ export type EditTourPackageType = {
   price: string;
   is_active: boolean;
   country: number;
+  prices: PriceItemType[];
 };
 
 export type SingleTourResponseType = {
@@ -110,9 +112,9 @@ export type CountryResponseType = {
 export type Activity = {
   id: number;
   name: string;
-  description: string | null;
+  description: string;
   location: string;
-  price_per_day: string;
+  prices: PriceItemType[];
   category: number;
 };
 
@@ -185,4 +187,18 @@ export type CreateTourType = {
   owner?: string;
   rating?: number;
   tour_plans?: TourPlanType[];
+  prices: PriceItemType[];
+};
+
+export type NationalityType =
+  | "RWANDA"
+  | "EAST_AFRICA"
+  | "FOREIGN_RESIDENCE_RW"
+  | "AFRICAN"
+  | "INTERNATIONAL";
+
+export type PriceItemType = {
+  nationality_type: string;
+  price?: number;
+  price_per_day?:number;
 };

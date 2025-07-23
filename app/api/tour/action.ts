@@ -2,6 +2,7 @@
 
 import { ActivityFormData } from "@/app/components/form/createActivityForm";
 import {
+  Activity,
   AddActivityTourPackageType,
   CategoriesResponse,
   CategoryType,
@@ -10,6 +11,7 @@ import {
   CustomeTourPackageType,
   CustomPackagesResponse,
   EditTourPackageType,
+  PriceItemType,
   SingleTourResponseType,
   TourPlanType,
   TourResponseType,
@@ -261,10 +263,31 @@ export const CreateActivities = async (
       },
       body: JSON.stringify(data),
     });
-
     const result = await response.json();
 
     return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const EditActivities = async (
+  actId: number,
+  data: ActivityFormData
+): Promise<{ success: boolean }> => {
+  try {
+    const response = await fetch(`${base_url}/activities/${actId}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      return { success: true };
+    } else return { success: false };
   } catch (error) {
     throw error;
   }
@@ -329,8 +352,6 @@ export const EditTourPackage = async (
 
     const result = await response.json();
 
-
-
     return result;
   } catch (error) {
     throw error;
@@ -364,18 +385,19 @@ export const CreateTourPlans = async (
 
 export const getTourPlans = async (
   tourId: number
-): Promise<{ success: boolean; data: TourPlanType }> => {
+): Promise<{ success: boolean; data: TourPlanType[] }> => {
   try {
-    const response = await fetch(`${base_url}/tours/plans/${tourId}/`, {
+    const response = await fetch(`${base_url}/tours/${tourId}/plans/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
     const result = await response.json();
-   
+    if (response.ok) {
+      return { success: response.ok, data: result };
+    }
     return result;
   } catch (error) {
     throw error;

@@ -12,7 +12,7 @@ import {
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
-import { getUser, User } from "@/app/api/user/action";
+import { DeleteUser, getUser, User } from "@/app/api/user/action";
 
 const { Title } = Typography;
 
@@ -61,10 +61,17 @@ const ServiceProviderPage = () => {
     // You can redirect to a detail page or open a modal here
   };
 
-  const handleDelete = (user: User) => {
-    message.success(`Deleted user: ${user.full_name}`);
-    // You can call your delete API here
-  };
+ const handleDelete = async (user: User) => {
+     try {
+       const result = await DeleteUser(user.id);
+       if (result) {
+         message.success(`Deleted user: ${user.full_name}`);
+         setUsers((prev) => prev.filter((client) => client.id !== user.id));
+       }
+     } catch (error) {
+       message.error(`something went wrong`);
+     }
+   };
 
   const columns: ColumnsType<User> = [
     {
@@ -111,13 +118,13 @@ const ServiceProviderPage = () => {
       key: "actions",
       render: (_text, record) => (
         <Space>
-          <Button
+          {/* <Button
             type="link"
             onClick={() => handleView(record)}
             className="text-blue-600"
           >
             View
-          </Button>
+          </Button> */}
           <Popconfirm
             title="Are you sure to delete this user?"
             onConfirm={() => handleDelete(record)}

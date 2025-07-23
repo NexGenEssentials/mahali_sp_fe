@@ -60,11 +60,11 @@ export default function AddTourPlans({
     }
 
     try {
+
       const result = await CreateTourPackage({
         ...data,
         tour_plans: tourPlans,
       });
-   
       if (result.success) {
         setId(result.data.id);
         message.success("Tour submitted successfully!");
@@ -72,6 +72,7 @@ export default function AddTourPlans({
         setStep(3);
       }
     } catch (err) {
+      console.log(err);
       message.error("Something went wrong");
     } finally {
       setIsLoading(false);
@@ -143,7 +144,6 @@ export default function AddTourPlans({
       )}
 
       <div className="w-full flex items-center justify-end">
-   
         <motion.button
           whileTap={{ scale: 0.9 }}
           type="button"

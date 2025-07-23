@@ -1,37 +1,22 @@
 "use client";
-import { CreateActivities } from "@/app/api/tour/action";
 import { useAppContext } from "@/app/context";
 import message from "antd/es/message";
 import React, { useState } from "react";
-import { PriceItemType } from "@/app/types/service/tour";
+import { Activity } from "@/app/types/service/tour";
+import { EditActivities } from "@/app/api/tour/action";
 
-export interface ActivityFormData {
-  name: string;
-  category_id: number;
-  prices: PriceItemType[];
-  location: string;
-  description: string;
-}
-
-interface CreateTourActivityFormProps {
+interface EditTourActivityFormProps {
+  data: Activity;
   catId: number;
   reload: (load: boolean) => void;
 }
 
-const CreateTourActivityForm = ({
+const EditTourActivityForm = ({
+  data,
   catId,
   reload,
-}: CreateTourActivityFormProps) => {
-  const [formData, setFormData] = useState<ActivityFormData>({
-    name: "",
-    category_id: catId,
-    prices: [],
-    location: "",
-    description: "",
-  });
-  const [save, setSave] = useState(false);
-
-  const [saveLoading, setSaveLoading] = useState(false);
+}: EditTourActivityFormProps) => {
+  const [formData, setFormData] = useState<Activity>(data);
   const [loading, setLoading] = useState(false);
   const { setActiveModalId } = useAppContext();
 
@@ -69,34 +54,29 @@ const CreateTourActivityForm = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (save) {
-      setSaveLoading(true);
-    } else {
-      setLoading(true);
-    }
+
+    setLoading(true);
+    const data = {
+      category_id: catId,
+      name: formData.name,
+      description: formData.description,
+      location: formData.location,
+      prices: formData.prices,
+    };
     try {
-      const result = await CreateActivities(formData);
+      const result = await EditActivities(formData.id, data);
+      
       if (result.success) {
-        message.success("Activity created successfully:");
+        message.success("Activity updated successfully:");
         reload(true);
-        if (save) {
-          setActiveModalId(null);
-        }
       } else {
-        message.error("Failed to create activity:");
+        message.error("Failed to update activity:");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
     } finally {
       setLoading(false);
-      setSaveLoading(false);
-      setFormData({
-        name: "",
-        category_id: catId,
-        prices: [],
-        location: "",
-        description: "",
-      });
+      setActiveModalId(null);
     }
   };
 
@@ -106,7 +86,7 @@ const CreateTourActivityForm = ({
       className="max-w-2xl min-w-[400px] mx-auto p-6 bg-white "
     >
       <h2 className="text-2xl font-bold mb-4 text-center">
-        Create Tour Activity
+        Edit Tour Activity
       </h2>
       <div className="mb-4">
         <label htmlFor="name" className="block font-medium text-gray-700 mb-2">
@@ -198,18 +178,6 @@ const CreateTourActivityForm = ({
       </div>
       <div className="flex flex-col items-center justify-between gap-3 ">
         <button
-          onClick={() => setSave(true)}
-          type="submit"
-          disabled={saveLoading}
-          className={`w-full py-2 px-4 rounded-md text-white transition ${
-            saveLoading
-              ? "bg-green-500 opacity-50 cursor-not-allowed"
-              : "bg-primaryGreen hover:bg-green-600"
-          }`}
-        >
-          {loading ? "Saving..." : "Save"}
-        </button>
-        <button
           type="submit"
           disabled={loading}
           className={`w-full py-2 px-4 rounded-md text-white transition ${
@@ -218,11 +186,11 @@ const CreateTourActivityForm = ({
               : "bg-primaryGreen hover:bg-green-600"
           }`}
         >
-          {loading ? "Saving..." : "Save & Add Another"}
+          {loading ? "Saving..." : "Save"}
         </button>
       </div>
     </form>
   );
 };
 
-export default CreateTourActivityForm;
+export default EditTourActivityForm;

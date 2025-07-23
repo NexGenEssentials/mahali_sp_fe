@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { message } from "antd";
 import { Input, Textarea } from "../../form/inputField";
 import { CountryType } from "@/app/types/service/tour";
-import { CreateTourPackage } from "@/app/api/tour/action";
 import AddTourPlans from "./addTourPlan";
 import { motion } from "framer-motion";
 import AddTourImages from "./addTourImages";
@@ -17,7 +16,6 @@ import { getAllCountry } from "@/app/api/destinations/action";
 
 export const tourFormSchema = z.object({
   title: z.string().min(1),
-  price: z.string().min(1),
   description: z.string().min(1),
   location: z.string().min(1),
   best_time_to_visit: z.string().min(1),
@@ -26,6 +24,12 @@ export const tourFormSchema = z.object({
   min_people: z.coerce.number().min(1),
   max_people: z.coerce.number().min(1),
   country_id: z.coerce.number().min(1),
+  prices: z.array(
+    z.object({
+      nationality_type: z.string(),
+      price: z.number(),
+    })
+  ),
 });
 
 export type TourFormSchema = z.infer<typeof tourFormSchema>;
@@ -37,7 +41,7 @@ export default function TourForm() {
   const [id, setId] = useState<number>(0);
   const [data, setData] = useState<TourFormSchema>({
     title: "",
-    price:"",
+    prices: [],
     description: "",
     location: "",
     best_time_to_visit: "",
@@ -192,14 +196,6 @@ export default function TourForm() {
               {...register("max_people")}
               error={errors.max_people?.message}
             />
-            <Input
-              type="text"
-              label="Tour Price"
-              min={1}
-              placeholder="$ 00.00"
-              {...register("price")}
-              error={errors.price?.message}
-            />
 
             <div>
               <label
@@ -228,6 +224,44 @@ export default function TourForm() {
                   {errors.country_id.message}
                 </p>
               )}
+            </div>
+          </div>
+
+          <div className="p-6 border rounded-md bg-gray-50 space-y-6">
+            <h2 className="font-bold text-xl text-primaryGreen">
+              Pricing Section
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                { label: "Rwandan", type: "RWANDA" },
+                { label: "East African", type: "EAST_AFRICA" },
+                {
+                  label: "Foreign Residence in Rwanda",
+                  type: "FOREIGN_RESIDENCE_RW",
+                },
+                { label: "African", type: "AFRICAN" },
+                { label: "International", type: "INTERNATIONAL" },
+              ].map((item, index) => (
+                <div key={index} className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700">
+                    {item.label}
+                  </label>
+                  <Input
+                    label=""
+                    type="number"
+                    error={errors.prices?.[index]?.price?.message}
+                    placeholder="$ 00.00"
+                    {...register(`prices.${index}.price`, {
+                      valueAsNumber: true,
+                    })}
+                  />
+                  <input
+                    type="hidden"
+                    value={item.type}
+                    {...register(`prices.${index}.nationality_type`)}
+                  />
+                </div>
+              ))}
             </div>
           </div>
 

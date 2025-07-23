@@ -13,7 +13,7 @@ export function getAllToursData(
           title: tour.title,
           description: tour.description,
           location: tour.location,
-          price: tour.price,
+          prices: tour.prices,
           duration_days: tour.duration_days,
           duration_nights: tour.duration_nights || 0, // Default value if missing
           rating: tour.rating,

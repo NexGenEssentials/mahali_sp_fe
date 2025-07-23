@@ -141,7 +141,7 @@ const DestinationPage = () => {
       <div className="p-4">
         <div className="flex justify-between gap-4 w-full px-4 mb-8">
           <h1 className="text-2xl font-semibold mb-4">All Destinations</h1>
-          <Link href="/destinations/country">
+          <Link href="/dashboard/destinations/country">
             <motion.span
               whileHover={{ scale: 0.9 }}
               className="p-3 rounded-md text-white hover:bg-primaryGreen bg-primaryGreen/70 cursor-pointer font-bold flex gap-2"

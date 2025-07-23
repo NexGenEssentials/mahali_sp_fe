@@ -6,15 +6,17 @@ import {
 } from "@/app/api/tour/action";
 import CreateTourActivityForm from "@/app/components/form/createActivityForm";
 import CreateTourCategoryForm from "@/app/components/form/createCategory";
+import EditTourActivityForm from "@/app/components/form/editActivityForm";
 import CenterModal from "@/app/components/model/centerModel";
 import Loader from "@/app/components/skeleton/loader";
 import { useAppContext } from "@/app/context";
 import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
-import { CategoryType } from "@/app/types/service/tour";
+import { Activity, CategoryType } from "@/app/types/service/tour";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import { message } from "antd";
 import { motion } from "framer-motion";
 import { SquarePen } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -26,7 +28,29 @@ const CreateCustomActivity = () => {
   const [expandedCategory, setExpandedCategory] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [categoryId, setCategoryId] = useState<number>(1);
-  const { setActiveModalId } = useAppContext();
+  const { setActiveModalId, activeModalId } = useAppContext();
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+
+  const [activity, setActivity] = useState<Activity>({
+    id: 0,
+    name: "",
+    description: "",
+    location: "",
+    prices: [],
+    category: 0,
+  });
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".activity-dropdown")) {
+        setOpenDropdownId(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     getCategoryList();
@@ -99,6 +123,10 @@ const CreateCustomActivity = () => {
     }
   };
 
+  const handleEdit = (activity: Activity) => {
+    setActivity(activity);
+    setActiveModalId("activityModeled");
+  };
 
   return (
     <ServiceProviderTemplate>
@@ -171,7 +199,11 @@ const CreateCustomActivity = () => {
                         </tr>
                         {expandedCategory === category.id && (
                           <tr>
-                            <td colSpan={5} className="p-4 bg-gray-50">
+                            <td
+                              key={category.id}
+                              colSpan={5}
+                              className="p-4 bg-gray-50"
+                            >
                               <div className="flex items-center justify-between gap-4">
                                 <div className="mb-2 text-lg font-semibold text-gray-700">
                                   Activities:
@@ -193,22 +225,64 @@ const CreateCustomActivity = () => {
                                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-4">
                                   {category.activities.map((activity) => (
                                     <div
+                                      // onClick={() => handleEdit(activity)}
                                       key={activity.id}
-                                      className="relative bg-white p-4 rounded-lg shadow hover:shadow-md transition"
+                                      className=" bg-white hover:bg-gray-200 cursor-pointer p-4 rounded-lg shadow hover:shadow-md transition"
                                     >
-                                      <div className="font-bold text-gray-800 text-lg mb-1">
-                                        {activity.name}
-                                      </div>
+                                      <div className="flex items-center justify-between w-full mb-4">
+                                        <div className="font-bold text-gray-800 text-lg mb-1">
+                                          {activity.name}
+                                        </div>
 
-                                      <div
-                                        onClick={() =>
-                                          handleDeleteActivity(activity.id)
-                                        }
-                                        title="Delete Activity"
-                                        className="bg-red-600 hover:bg-red-400 duration-200 cursor-pointer text-white text-sm w-4 h-4 p-3 flex items-center justify-center rounded-full absolute -top-1 right-0"
-                                      >
-                                        {" "}
-                                        X{" "}
+                                        <span className="relative activity-dropdown">
+                                          <Icon
+                                            onClick={() =>
+                                              setOpenDropdownId(
+                                                openDropdownId === activity.id
+                                                  ? null
+                                                  : activity.id
+                                              )
+                                            }
+                                            icon="pepicons-pop:dots-y"
+                                            width="25"
+                                            height="25"
+                                            className="text-primaryGreen cursor-pointer"
+                                          />
+                                          {openDropdownId === activity.id && (
+                                            <div className="absolute top-6 right-0 shadow-xl bg-white rounded-lg px-2 py-3 space-y-2 min-w-20 z-30 border">
+                                              <span
+                                                onClick={() =>
+                                                  handleEdit(activity)
+                                                }
+                                                className="flex w-full items-center gap-2 hover:bg-gray-200 hover:text-yelow-700 rounded-md text-sm px-4 py-1 text-primaryGreen cursor-pointer"
+                                              >
+                                                <Icon
+                                                  icon="line-md:edit"
+                                                  width="18"
+                                                  height="18"
+                                                  className="text-yellow-700 cursor-pointer"
+                                                />
+                                                Edit
+                                              </span>
+                                              <span
+                                                onClick={() =>
+                                                  handleDeleteActivity(
+                                                    activity.id
+                                                  )
+                                                }
+                                                className="flex items-center gap-2 hover:bg-gray-200 hover:text-red-500 rounded-md text-sm px-4 py-1 text-primaryGreen cursor-pointer"
+                                              >
+                                                <Icon
+                                                  icon="weui:delete-outlined"
+                                                  width="18"
+                                                  height="18"
+                                                  className="text-red-500 cursor-pointer"
+                                                />
+                                                Delete
+                                              </span>
+                                            </div>
+                                          )}
+                                        </span>
                                       </div>
 
                                       <p className="text-gray-600 text-sm">
@@ -227,7 +301,7 @@ const CreateCustomActivity = () => {
                                         <span className="font-semibold">
                                           Price/Day:
                                         </span>{" "}
-                                        $ {activity.price_per_day}
+                                        $ {activity?.prices[0]?.price_per_day}
                                       </p>
                                     </div>
                                   ))}
@@ -287,6 +361,16 @@ const CreateCustomActivity = () => {
           <CreateTourActivityForm catId={categoryId} reload={setCatLoading} />
         }
         id={"activityModel"}
+      />
+      <CenterModal
+        children={
+          <EditTourActivityForm
+            data={activity}
+            catId={categoryId}
+            reload={setCatLoading}
+          />
+        }
+        id={"activityModeled"}
       />
     </ServiceProviderTemplate>
   );

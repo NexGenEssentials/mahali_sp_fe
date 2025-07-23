@@ -5,38 +5,22 @@ import { Upload, Check } from "lucide-react";
 import { Card } from "../card/card";
 
 interface FormData {
-  businessName: string;
   ownerName: string;
-  email: string;
-  phone: string;
-  address: string;
-  serviceType: string;
   description: string;
   yearsInBusiness: string;
   licenses: string[];
   agreementAccepted: boolean;
   streetAddress: string;
-  city: string;
-  country: string;
-  zipCode: string;
 }
 
 export const ServiceProviderForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    businessName: "",
     ownerName: "",
-    email: "",
-    phone: "",
-    address: "",
-    serviceType: "",
     description: "",
     yearsInBusiness: "",
     licenses: [],
     agreementAccepted: false,
     streetAddress: "",
-    city: "",
-    country: "",
-    zipCode: "",
   });
 
   const [step, setStep] = useState(1);
@@ -66,16 +50,15 @@ export const ServiceProviderForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
-    
   };
 
   return (
     <Card className="max-w-4xl mx-auto p-6">
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Registration Form</h2>
+        <h2 className="text-2xl font-semibold mb-2">Complete Profile Form</h2>
         <div className="flex justify-between items-center">
           <div className="flex gap-2">
-            {[1, 2, 3].map((i) => (
+            {[1, 2].map((i) => (
               <div
                 key={i}
                 className={`w-3 h-3 rounded-full ${
@@ -84,31 +67,14 @@ export const ServiceProviderForm: React.FC = () => {
               />
             ))}
           </div>
-          <span className="text-sm text-gray-500">Step {step} of 3</span>
+          <span className="text-sm text-gray-500">Step {step} of 2</span>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {step === 1 && (
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  className="block text-sm font-medium mb-1"
-                  htmlFor="businessName"
-                >
-                  Business Name
-                </label>
-                <input
-                  type="text"
-                  id="businessName"
-                  name="businessName"
-                  value={formData.businessName}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 "
-                  required
-                />
-              </div>
+            <div className="grid grid-cols-1s gap-4">
               <div>
                 {" "}
                 <label
@@ -127,129 +93,6 @@ export const ServiceProviderForm: React.FC = () => {
                   required
                 />
               </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  className="block text-sm font-medium mb-1"
-                  htmlFor="email"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 "
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  className="block text-sm font-medium mb-1"
-                  htmlFor="phone"
-                >
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 "
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              {" "}
-              <label
-                className="block text-sm font-medium mb-1"
-                htmlFor="streetAddress"
-              >
-                Address
-              </label>
-              <input
-                type="text"
-                id="streetAddress"
-                placeholder="Street Address"
-                name="streetAddress"
-                value={formData.streetAddress}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 "
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <input
-                  type="city"
-                  id="city"
-                  name="city"
-                  placeholder="City"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 "
-                  required
-                />
-              </div>
-              <div>
-                <input
-                  type="tel"
-                  id="country"
-                  name="country"
-                  placeholder="Country"
-                  value={formData.country}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 "
-                  required
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  id="zipCode"
-                  name="zipCode"
-                  placeholder="Zip Code /postal code"
-                  value={formData.zipCode}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 "
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div className="space-y-4">
-            <div>
-              <label
-                className="block text-sm font-medium mb-1"
-                htmlFor="serviceType"
-              >
-                Service Type
-              </label>
-              <select
-                id="serviceType"
-                name="serviceType"
-                value={formData.serviceType}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 "
-                required
-              >
-                <option value="">Select a service type</option>
-                <option value="Car Rental">Car Rental</option>
-                <option value="Accommodation">Accommodation</option>
-                <option value="Tour Package">Tour Package</option>
-
-                <option value="other">Other</option>
-              </select>
             </div>
 
             <div>
@@ -318,6 +161,7 @@ export const ServiceProviderForm: React.FC = () => {
                   </p>
                 </div>
               </div>
+
               {formData.licenses.length > 0 && (
                 <div className="mt-2">
                   <h4 className="text-sm font-medium">Uploaded files:</h4>
@@ -338,7 +182,7 @@ export const ServiceProviderForm: React.FC = () => {
           </div>
         )}
 
-        {step === 3 && (
+        {step === 2 && (
           <div className="space-y-4">
             <div className="p-4 bg-gray-50  rounded-lg">
               <h3 className="text-lg font-medium mb-4">Service Agreement</h3>
@@ -407,7 +251,7 @@ export const ServiceProviderForm: React.FC = () => {
               Previous
             </button>
           )}
-          {step < 3 ? (
+          {step < 2 ? (
             <button
               type="button"
               onClick={() => setStep(step + 1)}

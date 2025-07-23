@@ -58,6 +58,7 @@ export type Message = {
   phone: string;
   seen: boolean;
 };
+
 export const getMessages = async (): Promise<{
   status: string;
   message: string;
@@ -75,6 +76,47 @@ export const getMessages = async (): Promise<{
     const data = await response.json();
 
     return data;
+  } catch (error) {
+    throw error;
+  }
+};
+export const getSubs = async (): Promise<{
+  status: string;
+  message: string;
+  data: { email: string }[];
+}> => {
+  try {
+    const response = await fetch(`${base_url}/subscribers/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json();
+   
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const DeleteUser = async (userId: number): Promise<boolean> => {
+  try {
+    const response = await fetch(`${base_url}/users/${userId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (response.status === 204) {
+      return true;
+    }
+
+    return false;
   } catch (error) {
     throw error;
   }

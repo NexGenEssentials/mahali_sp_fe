@@ -34,18 +34,14 @@ const EditTourPlan = ({ id }: { id: number }) => {
   useEffect(() => {
     const fetchTourPlans = async () => {
       try {
-        const data = await getTourPlans(id);
+        const result = await getTourPlans(id);
 
-        if (data) {
-          if ('title' in data && 'description' in data && 'inclusion' in data && 'accommodation' in data) {
-            setTourPlans(prev => [...prev, data as TourPlanType]);
-          } else {
-            console.error("Invalid data format:", data);
-            message.error("Failed to load tour plans due to invalid data format.");
-          }
+        if (result.success) {
+          setTourPlans(result.data);
+
           setLoading(false);
         } else {
-          message.error("Failed to load tour plans.");
+          message.warning("tour plans not available add them.");
         }
       } catch (error) {
         console.error(error);
@@ -79,6 +75,11 @@ const EditTourPlan = ({ id }: { id: number }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRemoveTourPlan = async (planId: string) => {
+    reset()
+    setTourPlans((prev) => prev.filter((plan) => plan.title !== planId));
   };
 
   if (loading)
@@ -133,9 +134,24 @@ const EditTourPlan = ({ id }: { id: number }) => {
           <div className="max-h-64 bg-gray-100 overflow-y-auto mt-2 space-y-3 p-2">
             {tourPlans.map((plan, index) => (
               <div
+                onClick={() =>
+                  reset({
+                    title: plan.title,
+                    description: plan.description,
+                    inclusion: plan.inclusion ?? undefined,
+                    accommodation: plan.accommodation ?? undefined,
+                  })
+                }
                 key={index}
-                className="border p-4 rounded-md bg-white shadow-sm"
+                className="border p-4 rounded-md bg-white hover:bg-gray-300 cursor-pointer shadow-sm relative"
               >
+                <div
+                  onClick={() => handleRemoveTourPlan(plan.title)}
+                  title="Delete tour plan"
+                  className="w-4 h-4 cursor-pointer rounded-full absolute -top-2 -right-2 p-3 bg-gray-500 hover:bg-red-500 duration-300 transition-colors flex items-center justify-center text-white font-bold "
+                >
+                  x
+                </div>
                 <h4 className="font-semibold">{plan.title}</h4>
                 <p>
                   <strong>Description:</strong> {plan.description}

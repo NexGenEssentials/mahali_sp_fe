@@ -11,6 +11,7 @@ import { tourFormSchema } from "./createTourForm";
 import { getAllCountry } from "@/app/api/destinations/action";
 import message from "antd/es/message";
 import Loader from "../../skeleton/loader";
+import { Input } from "../../form/inputField";
 
 const EditTourInformation = ({ id }: { id: number }) => {
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,7 @@ const EditTourInformation = ({ id }: { id: number }) => {
           min_people: tour.min_people,
           max_people: tour.max_people,
           rating: tour.rating,
-          price: tour.price,
+          prices: tour.prices,
           is_active: tour.is_active,
           country: tour.country,
         });
@@ -73,7 +74,7 @@ const EditTourInformation = ({ id }: { id: number }) => {
   const onSubmit = async (data: EditTourPackageType) => {
     try {
       const res = await EditTourPackage(data, id);
-     
+
       if (res.success) {
         reset();
         message.success("Tour updated successfully!");
@@ -118,7 +119,6 @@ const EditTourInformation = ({ id }: { id: number }) => {
           { name: "min_people", label: "Minimum People", type: "number" },
           { name: "max_people", label: "Maximum People", type: "number" },
           { name: "rating", label: "Rating (1-5)", type: "number" },
-          { name: "price", label: "Price (USD)", type: "number" },
         ].map(({ name, label, type }) => (
           <div key={name}>
             <label className="block text-sm font-medium text-gray-700">
@@ -136,6 +136,44 @@ const EditTourInformation = ({ id }: { id: number }) => {
             )}
           </div>
         ))}
+
+        <div className="p-6 border md:col-span-2 rounded-md bg-gray-50 space-y-6">
+          <h2 className="font-bold text-xl text-primaryGreen">
+            Pricing Section
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              { label: "Rwandan", type: "RWANDA" },
+              { label: "East African", type: "EAST_AFRICA" },
+              {
+                label: "Foreign Residence in Rwanda",
+                type: "FOREIGN_RESIDENCE_RW",
+              },
+              { label: "African", type: "AFRICAN" },
+              { label: "International", type: "INTERNATIONAL" },
+            ].map((item, index) => (
+              <div key={index} className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">
+                  {item.label}
+                </label>
+                <Input
+                  label=""
+                  type="number"
+                  error={errors.prices?.[index]?.price?.message}
+                  placeholder="$ 00.00"
+                  {...register(`prices.${index}.price`, {
+                    valueAsNumber: true,
+                  })}
+                />
+                <input
+                  type="hidden"
+                  value={item.type}
+                  {...register(`prices.${index}.nationality_type`)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Description field (full width) */}
         <div className="md:col-span-2">
