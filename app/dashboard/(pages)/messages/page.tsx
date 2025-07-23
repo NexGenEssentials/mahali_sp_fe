@@ -1,7 +1,13 @@
 "use client";
-import { getMessages, getSubs, Message } from "@/app/api/user/action";
+import {
+  getMessages,
+  getSubs,
+  MarkMessage,
+  Message,
+} from "@/app/api/user/action";
 import Loader from "@/app/components/skeleton/loader";
 import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
+import message from "antd/es/message";
 import React, { useEffect, useState } from "react";
 
 const MESSAGES_PER_PAGE = 5;
@@ -20,20 +26,26 @@ const ContactUsTable = () => {
     handleGetSubs();
   }, []);
 
-  const toggleSeenStatus = (index: number) => {
-    const globalIndex = (currentPage - 1) * MESSAGES_PER_PAGE + index;
-    const updated = [...messages];
-    updated[globalIndex].seen = !updated[globalIndex].seen;
-    setMessages(updated);
+  const toggleSeenStatus = async (id: number) => {
+    try {
+      const result = await MarkMessage(id); // this should mark the message as read in the backend
+      if (result.status === "success") {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === id ? { ...m, is_read: !m.is_read } : m))
+        );
+      } else {
+        message.warning("Something went wrong");
+      }
+    } catch (error) {
+      console.error("Failed to mark message as read:", error);
+    }
   };
 
   const handleGetMessage = async () => {
     try {
       const result = await getMessages();
       if (result.status) {
-        setMessages(
-          result.data.map((message: Message) => ({ ...message, seen: false }))
-        );
+        setMessages(result.data);
       }
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -90,6 +102,7 @@ const ContactUsTable = () => {
                   <table className="min-w-full text-left border-collapse">
                     <thead>
                       <tr className="text-gray-600">
+                        <th className="px-4 py-2">#</th>
                         <th className="px-4 py-2">Email</th>
                         <th className="px-4 py-2">Name</th>
                         <th className="px-4 py-2">Message</th>
@@ -109,24 +122,27 @@ const ContactUsTable = () => {
                       ) : (
                         paginatedMessages.map((msg, idx) => (
                           <tr key={idx} className="border-t">
+                            <td className="px-4 py-3">{idx + 1}</td>
                             <td className="px-4 py-3">{msg.email}</td>
                             <td className="px-4 py-3">{msg.full_name}</td>
                             <td className="px-4 py-3">{msg.message}</td>
                             <td className="px-4 py-3 flex items-center space-x-3">
                               <span
                                 className={`h-3 w-3 rounded-full ${
-                                  msg.seen ? "bg-green-500" : "bg-red-500"
+                                  msg.is_read ? "bg-green-500" : "bg-red-500"
                                 }`}
                               />
                               <button
-                                onClick={() => toggleSeenStatus(idx)}
+                                onClick={() => toggleSeenStatus(msg.id)}
                                 className={`px-4 py-2 border rounded font-medium ${
-                                  msg.seen
+                                  msg.is_read
                                     ? "bg-white text-black"
                                     : "bg-black hover:bg-gray-800 text-white"
-                                }`}
+                                } text-nowrap`}
                               >
-                                {msg.seen ? "Mark as Unseen" : "Mark as Seen"}
+                                {msg.is_read
+                                  ? "Mark as Unseen"
+                                  : "Mark as Seen"}
                               </button>
                             </td>
                           </tr>
@@ -182,7 +198,10 @@ const ContactUsTable = () => {
             <h2 className="text-lg font-semibold mb-4">Subscribers</h2>
             <ul className="divide-y divide-gray-200 max-h-[400px] overflow-auto hide-scrollbar">
               {subscribers.map((subscriber, index) => (
-                <li key={index} className="py-2 px-2 text-gray-800 text-sm font-semibold">
+                <li
+                  key={index}
+                  className="py-2 px-2 text-gray-800 text-sm font-semibold"
+                >
                   {index + 1}. 📧 {subscriber.email}
                 </li>
               ))}

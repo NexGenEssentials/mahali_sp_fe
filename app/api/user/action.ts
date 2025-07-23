@@ -52,11 +52,12 @@ export const getUser = async (): Promise<{
 };
 
 export type Message = {
+  id: number;
   full_name: string;
   email: string;
   message: string;
   phone: string;
-  seen: boolean;
+  is_read: boolean;
 };
 
 export const getMessages = async (): Promise<{
@@ -80,6 +81,30 @@ export const getMessages = async (): Promise<{
     throw error;
   }
 };
+
+export const MarkMessage = async (
+  msgId: number
+): Promise<{ status: string; message: string }> => {
+  try {
+    const response = await fetch(
+      `${base_url}/contact-messages/${msgId}/toggle-read/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({}),
+      }
+    );
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getSubs = async (): Promise<{
   status: string;
   message: string;
@@ -95,7 +120,7 @@ export const getSubs = async (): Promise<{
     });
 
     const data = await response.json();
-   
+
     return data;
   } catch (error) {
     throw error;

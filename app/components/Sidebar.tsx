@@ -23,6 +23,7 @@ const commonItems = [
   {
     name: "Analytics",
     icon: FaChartBar,
+    link: "",
   },
   {
     name: "Register Account",
@@ -32,10 +33,12 @@ const commonItems = [
   {
     name: "Service",
     icon: FaServicestack,
+    link: "service",
   },
   {
     name: "Booking",
     icon: FaClipboardList,
+    link: "booking",
   },
   // {
   //   name: "Payments",
@@ -47,6 +50,7 @@ const AdminItems = [
   {
     name: "Users",
     icon: FaUser,
+    link: "users",
   },
   {
     name: "Service Providers",
@@ -56,10 +60,12 @@ const AdminItems = [
   {
     name: "Promotions",
     icon: FaTags,
+    link: "promotions",
   },
   {
     name: "Destinations",
     icon: FaMapMarkedAlt,
+    link: "destinations",
   },
 
   {
@@ -76,22 +82,11 @@ const AdminItems = [
 ];
 
 export default function Sidebar() {
-  const { expanded, setExpanded, activeTab, setActiveTab, userRole } =
-    useAppContext();
+  const { expanded, setExpanded, userRole } = useAppContext();
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    const current = pathname.split("/").pop() || "Analytics";
-    if (current.includes("dashboard")) {
-      setActiveTab("Analytics");
-    } else {
-      setActiveTab(current.charAt(0).toUpperCase() + current.slice(1));
-    }
-  }, [pathname]);
-
   const handleTabClick = (tabName: string) => {
-    setActiveTab(tabName);
     setExpanded(true);
     if (tabName === "Analytics") {
       router.push("/dashboard");
@@ -103,7 +98,6 @@ export default function Sidebar() {
   const handleLogout = () => {
     Logout();
     router.push("/");
-    setActiveTab("Analytics");
   };
 
   const SidebarItems =
@@ -139,28 +133,33 @@ export default function Sidebar() {
 
       <div className="flex flex-col justify-between h-[85%]">
         <ul className="mt-4 space-y-4 px-4">
-          {SidebarItems.map((item, index) => (
-            <li
-              onClick={() => handleTabClick(item.link ? item.link : item.name)}
-              className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all duration-100 ${
-                activeTab.includes(item.link ? item.link : item.name)
-                  ? "bg-green-100 text-slate-700 font-bold shadow-md"
-                  : "text-slate-500"
-              } ${
-                expanded ? "justify-start hover:bg-green-200" : "justify-center"
-              }`}
-              key={index}
-            >
-              {React.createElement(item.icon, {
-                className: `${
-                  activeTab === (item.link ? item.link : item.name)
-                    ? "text-slate-700 text-lg"
+          {SidebarItems.map((item, index) => {
+            const active = pathname.includes(item.link);
+            return (
+              <li
+                onClick={() =>
+                  handleTabClick(item.link ? item.link : item.name)
+                }
+                className={`flex items-center gap-3 p-2 rounded-md cursor-pointer transition-all duration-100 ${
+                  active
+                    ? "bg-green-100 text-slate-700 font-bold shadow-md"
                     : "text-slate-500"
-                } cursor-pointer`,
-              })}
-              {expanded && <span>{item.name}</span>}
-            </li>
-          ))}
+                } ${
+                  expanded
+                    ? "justify-start hover:bg-green-200"
+                    : "justify-center"
+                }`}
+                key={index}
+              >
+                {React.createElement(item.icon, {
+                  className: `${
+                    active ? "text-slate-700 text-lg" : "text-slate-500"
+                  } cursor-pointer`,
+                })}
+                {expanded && <span>{item.name}</span>}
+              </li>
+            );
+          })}
         </ul>
         <div
           onClick={handleLogout}

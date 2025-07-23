@@ -1,6 +1,10 @@
 "use server";
 
-import { BookingResponse, BulkBookingResponse, PaymentResponseType } from "@/app/types/booking";
+import {
+  BookingResponse,
+  BulkBookingResponse,
+  PaymentResponseType,
+} from "@/app/types/booking";
 import { cookies } from "next/headers";
 const base_url = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
 
@@ -66,7 +70,7 @@ export const DeleteMyBooking = async (objectId: number): Promise<boolean> => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
+    console.log(response);
     if (!response.ok) {
       return false;
     }

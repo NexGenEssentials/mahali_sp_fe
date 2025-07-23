@@ -42,6 +42,7 @@ export type BulkCarDetail = {
 };
 
 export interface BulkBookingType {
+  id:number,
   user: number;
   start_date: string; // You can use `Date` if you're converting to Date objects
   end_date: string;

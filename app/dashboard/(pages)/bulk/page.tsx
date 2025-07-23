@@ -1,10 +1,24 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Table, Input, Button, Space, Popconfirm, message } from "antd";
+import {
+  Table,
+  Input,
+  Button,
+  Space,
+  Popconfirm,
+  message,
+  Select,
+  Tag,
+} from "antd";
+const { Option } = Select;
 import type { ColumnsType } from "antd/es/table";
 import { SearchOutlined, DeleteOutlined } from "@ant-design/icons";
 
-import { getbulkBookings } from "@/app/api/booking/action";
+import {
+  DeleteMyBooking,
+  getbulkBookings,
+  updateBookingStatus,
+} from "@/app/api/booking/action";
 import Loader from "@/app/components/skeleton/loader";
 import { BulkBookingType } from "@/app/types/booking";
 import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
@@ -22,13 +36,7 @@ const ListingBulkBooking: React.FC = () => {
     try {
       const response = await getbulkBookings();
       if (response.status === "success") {
-        const dataWithIds = response.data.map(
-          (item: BulkBookingType, index: number) => ({
-            ...item,
-            id: index + 1,
-          })
-        );
-        setData(dataWithIds);
+        setData(response.data);
       } else {
         message.error("Failed to fetch bookings");
       }
@@ -40,12 +48,31 @@ const ListingBulkBooking: React.FC = () => {
     }
   };
 
-  const handleDelete = (index: number) => {
-    const updated = [...data];
-    updated.splice(index, 1);
-    setData(updated);
-    message.success("Booking deleted successfully");
+  const handleDelete = async (bookingId: number) => {
+    try {
+      const result = await DeleteMyBooking(bookingId);
+      if (result) {
+        message.success("Booking deleted successfully");
+        setData((prev) => prev.filter((booking) => booking.id !== bookingId));
+      }
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+    }
   };
+
+  const handleStatusChange = async (id: number, newStatus: string) => {
+    try {
+      const result = await updateBookingStatus(id, newStatus);
+      message.success(`${result.message}
+          ${result.message}
+        }`);
+    } catch (error) {
+      console.error("Error updating booking status:", error);
+    } finally {
+      handleGetbulkBookings();
+    }
+  };
+
   const filteredData = data.filter((item) =>
     item.note.toLowerCase().includes(searchText.toLowerCase())
   );
@@ -88,12 +115,31 @@ const ListingBulkBooking: React.FC = () => {
     {
       title: "Status",
       dataIndex: "status",
-      filters: [
-        { text: "Pending", value: "pending" },
-        { text: "Approved", value: "approved" },
-      ],
-      onFilter: (value, record) => record.status === value,
+      key: "status",
+      render: (status: string, record: BulkBookingType) =>
+        status === "pending" ? (
+          <Select
+            defaultValue={status}
+            onChange={(value) => handleStatusChange(record.id, value)}
+          >
+            <Option value="confirm">Confirm</Option>
+            <Option value="cancel">Cancel</Option>
+          </Select>
+        ) : (
+          <Tag color={status === "confirmed" ? "green" : "red"}>
+            {status.toUpperCase()}
+          </Tag>
+        ),
     },
+    // {
+    //   title: "Status",
+    //   dataIndex: "status",
+    //   filters: [
+    //     { text: "Pending", value: "pending" },
+    //     { text: "Approved", value: "approved" },
+    //   ],
+    //   onFilter: (value, record) => record.status === value,
+    // },
     {
       title: "Action",
       key: "action",
