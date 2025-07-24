@@ -70,7 +70,7 @@ export const DeleteMyBooking = async (objectId: number): Promise<boolean> => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    console.log(response);
+   
     if (!response.ok) {
       return false;
     }

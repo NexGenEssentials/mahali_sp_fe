@@ -6,7 +6,7 @@ import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
 import { useRouter } from "next/navigation";
 import Loader from "@/app/components/skeleton/loader";
 import RoomTypesTable from "@/app/components/service/accommodation/roomtypeTable";
-
+import { message } from "antd";
 
 const AccommodationDetails = ({ params }: { params: { id: number } }) => {
   const [accommodation, setAccommodation] = useState<AccommodationType | null>(
@@ -20,8 +20,13 @@ const AccommodationDetails = ({ params }: { params: { id: number } }) => {
     const fetchAccommodationDetails = async () => {
       try {
         const response = await getAccommodation(params.id);
-        setAccommodation(response.data.accommodation);
-        setRoomTypes(response.data.room_types);
+        if (response.success) {
+          message.success(response.message);
+          setAccommodation(response.data);
+          setRoomTypes(response.data.room_types);
+        } else {
+          message.warning("something went wrong");
+        }
       } catch (error) {
         console.error("Error fetching accommodation details:", error);
       } finally {
@@ -36,26 +41,25 @@ const AccommodationDetails = ({ params }: { params: { id: number } }) => {
     return <Loader />;
   }
 
-if (!accommodation) {
-  return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-     
-      <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-        Accommodation Not Found
-      </h2>
-      <p className="text-gray-600 mb-4">
-        We couldn't retrieve the details of this accommodation. It may have been
-        deleted or the link is invalid.
-      </p>
-      <button
-        onClick={() => router.push("/dashboard/service")}
-        className="px-6 py-2 bg-primaryGreen text-white rounded hover:bg-primaryGreen/80 transition"
-      >
-        Go Back to Accommodations
-      </button>
-    </div>
-  );
-}
+  if (!accommodation) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+          Accommodation Not Found
+        </h2>
+        <p className="text-gray-600 mb-4">
+          We couldn't retrieve the details of this accommodation. It may have
+          been deleted or the link is invalid.
+        </p>
+        <button
+          onClick={() => router.push("/dashboard/service")}
+          className="px-6 py-2 bg-primaryGreen text-white rounded hover:bg-primaryGreen/80 transition"
+        >
+          Go Back to Accommodations
+        </button>
+      </div>
+    );
+  }
 
   const fallbackImage =
     "https://via.placeholder.com/1200x600?text=No+Image+Available";

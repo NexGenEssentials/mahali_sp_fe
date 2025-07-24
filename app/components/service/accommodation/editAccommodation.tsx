@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,10 +11,12 @@ import CreateFacilities from "./facility";
 import message from "antd/es/message";
 import {
   CreateAccommodationImage,
-  CreateAccomodation,
+  EditAccomodation,
+  getAccommodation,
 } from "@/app/api/accommodation/action";
 import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
+import Loader from "../../skeleton/loader";
 
 const accommSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -43,18 +45,19 @@ const accommSchema = z.object({
 
 export type AccommFormData = z.infer<typeof accommSchema>;
 
-const AccommodationForm: React.FC = () => {
+const EditAccommodationForm = ({ id }: { id: number }) => {
   const { setActiveModalId } = useAppContext();
   const router = useRouter();
   const [selectedFacilities, setSelectedFacilities] = useState<
     { id: number; name: string }[]
   >([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    setValue,
+    formState: { errors, isSubmitting },
+    reset,
   } = useForm<AccommFormData>({
     resolver: zodResolver(accommSchema),
     defaultValues: {
@@ -64,12 +67,14 @@ const AccommodationForm: React.FC = () => {
       rating: 0,
       smoking_allowed: false,
       pets_allowed: false,
-      image: null, // Default value for image
+      image: null,
     },
   });
 
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const normalizeTime = (timeStr: string) => timeStr.slice(0, 5);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { "image/*": [".jpeg", ".jpg", ".png", ".webp"] },
     multiple: true,
@@ -83,7 +88,6 @@ const AccommodationForm: React.FC = () => {
   });
 
   const onSubmit = async (data: AccommFormData) => {
-    setLoading(true);
     try {
       const facilityIds = selectedFacilities.map((f) => f.id);
 
@@ -93,24 +97,23 @@ const AccommodationForm: React.FC = () => {
         facility_ids: facilityIds,
       };
 
-      const result = await CreateAccomodation(formData);
+      const result = await EditAccomodation(id, formData);
 
       if (!result) {
         message.error("Failed to create accommodation. Please try again.");
         return;
       }
-      if (result.success) {
-        message.success("Accommodation created successfully!");
+      if (result.success && images.length > 0) {
+        message.success("Accommodation updated successfully!");
 
         const formData = new FormData();
-        formData.append("accommodation", result.data.id.toString());
+        formData.append("accommodation", id.toString());
         images.forEach((img) => {
           formData.append("image", img);
         });
         const response = await CreateAccommodationImage(formData);
         if (response.success) {
           message.success("Image uploaded successfully!");
-          router.push("/dashboard/service");
         } else {
           message.error("Failed to upload image.");
         }
@@ -121,6 +124,7 @@ const AccommodationForm: React.FC = () => {
     } finally {
       setImages([]);
       setImagePreviews([]);
+      router.push("/dashboard/service");
     }
   };
 
@@ -133,11 +137,55 @@ const AccommodationForm: React.FC = () => {
     setImagePreviews(updatedPreviews);
   };
 
+  useEffect(() => {
+    const fetchAccommodationDetails = async () => {
+      try {
+        const response = await getAccommodation(id);
+
+        if (response.success) {
+          reset({
+            name: response.data.name,
+            description: response.data.description,
+            location: response.data.location,
+            address: response.data.address,
+            latitude: Number(response.data.latitude),
+            longitude: Number(response.data.longitude),
+            category: response.data.category,
+            rating: Number(response.data.rating),
+            facility_ids: response.data.facilities.map((f) => f.id),
+            tags: response.data.tags || "",
+            check_in_time: normalizeTime(response.data.check_in_time),
+            check_out_time: normalizeTime(response.data.check_out_time),
+            smoking_allowed: response.data.smoking_allowed,
+            pets_allowed: response.data.pets_allowed,
+            additional_rules: response.data.additional_rules || "",
+            is_active: response.data.is_active,
+            is_featured: response.data.is_featured,
+          });
+          setSelectedFacilities(response.data.facilities || []);
+        } else {
+          message.warning("something went wrong");
+        }
+      } catch (error) {
+        console.error("Error fetching accommodation details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccommodationDetails();
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <div className="bg-gray-100 p-6 max-w-4xl mx-auto ">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">
-        Create Accommodation
+      <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        Edit Accommodation
       </h1>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-6 p-6 bg-white border border-gray-300 rounded-lg shadow-md"
@@ -259,7 +307,7 @@ const AccommodationForm: React.FC = () => {
         <div className="grid grid-cols-1  gap-4 border-t-2 pt-4 w-full">
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block font-bold text-sm text-gray-700 mb-2">
                 Add Facilities
               </label>
               <span
@@ -302,7 +350,9 @@ const AccommodationForm: React.FC = () => {
 
           {/* Image Upload */}
           <div>
-            <h3 className="font-semibold text-gray-700 mb-2">Accommodation Images</h3>
+            <h3 className="font-semibold text-gray-700 mb-2">
+              Add more accommodation Images
+            </h3>
 
             <div
               {...getRootProps()}
@@ -348,17 +398,18 @@ const AccommodationForm: React.FC = () => {
         <div className="lg:col-span-2">
           <button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             className={`bg-primaryGreen text-white px-4 py-2 rounded-md transition-colors w-full ${
-              loading
+              isSubmitting
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-primaryGreen/80"
             }`}
           >
-            {loading ? "Submitting..." : "Create Accommodation"}
+            {isSubmitting ? "Submitting..." : "Edit Accommodation"}
           </button>
         </div>
       </form>
+
       <CenterModal
         children={
           <CreateFacilities
@@ -371,4 +422,4 @@ const AccommodationForm: React.FC = () => {
   );
 };
 
-export default AccommodationForm;
+export default EditAccommodationForm;

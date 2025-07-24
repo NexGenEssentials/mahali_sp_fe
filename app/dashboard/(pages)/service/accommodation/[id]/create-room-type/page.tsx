@@ -45,7 +45,6 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
     reset,
   } = useForm<RoomFormData>({
     resolver: zodResolver(roomSchema),

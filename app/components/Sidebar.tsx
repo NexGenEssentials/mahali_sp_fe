@@ -111,7 +111,7 @@ export default function Sidebar() {
     >
       <div className="flex items-center justify-between p-4 border-b">
         <span className={`${expanded ? "block" : "hidden"} text-xl font-bold`}>
-          Mahali Africa Advanture
+          Mahali Africa Adventures
         </span>
         {expanded && (
           <div className="bg-green-300 p-2 rounded-md">
@@ -134,11 +134,15 @@ export default function Sidebar() {
       <div className="flex flex-col justify-between h-[85%]">
         <ul className="mt-4 space-y-4 px-4">
           {SidebarItems.map((item, index) => {
-            const fullPath =
+            const basePath =
               item.link === ""
                 ? "/dashboard"
                 : `/dashboard/${item.link.toLowerCase()}`;
-            const active = pathname === fullPath;
+
+            const active =
+              item.link === ""
+                ? pathname === basePath
+                : pathname === basePath || pathname.startsWith(`${basePath}/`);
             return (
               <li
                 onClick={() =>

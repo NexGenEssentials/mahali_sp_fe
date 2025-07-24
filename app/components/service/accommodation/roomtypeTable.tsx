@@ -30,7 +30,7 @@ const RoomTypesTable: React.FC<RoomTypesTableProps> = ({
 
   const handleEdit = (roomId: number) => {
     router.push(
-      `/dashboard/service/accommodation/${accommodationId}/edit-room-type/${roomId}`
+      `/dashboard/service/accommodation/${accommodationId}/room-type/${roomId}`
     );
   };
 
@@ -75,7 +75,19 @@ const RoomTypesTable: React.FC<RoomTypesTableProps> = ({
 
   return (
     <div className="overflow-x-auto bg-white p-4 rounded">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Room Types</h2>
+      <div className="flex items-center gap-2 justify-between pb-4">
+        <h2 className="text-3xl font-bold text-gray-800 mb-6">Room Types</h2>
+        <button
+          className="px-6 py-2 bg-primaryGreen/70 text-white rounded-lg hover:bg-primaryGreen transition-colors"
+          onClick={() =>
+            router.push(
+              `/dashboard/service/accommodation/${accommodationId}/create-room-type`
+            )
+          }
+        >
+          Add Room Type
+        </button>
+      </div>
       <table className="w-full min-w-[1000px] table-auto border border-gray-200 shadow-md rounded-lg overflow-hidden">
         <thead className="bg-gray-100 text-gray-700 text-sm uppercase">
           <tr>

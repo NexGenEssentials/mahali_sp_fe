@@ -45,7 +45,7 @@ const AdminAccommodationTable = () => {
   };
 
   const handleUpdate = (id: number) => {
-    console.log("Update accomodation:", id);
+   router.push(`/dashboard/service/accommodation/edit/${id}`);
   };
 
   const handleView = (id: number, category: string) => {

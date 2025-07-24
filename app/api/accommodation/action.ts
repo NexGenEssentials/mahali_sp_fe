@@ -4,6 +4,7 @@ import { AccommFormData } from "@/app/components/service/accommodation/createAcc
 import { RoomFormData } from "@/app/dashboard/(pages)/service/accommodation/[id]/create-room-type/page";
 import {
   AccommodationResponse,
+  RoomType,
   SingleAccommodationResponse,
 } from "@/app/types/service/accommodation";
 import { cookies } from "next/headers";
@@ -232,6 +233,36 @@ export const CreateAccomodation = async (
   }
 };
 
+export const EditAccomodation = async (
+  id: number,
+  body: AccommFormData
+): Promise<{
+  success: boolean;
+  message: string;
+  data: { id: number };
+}> => {
+  try {
+    const response = await fetch(`${base_url}/accommodation/${id}/`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    console.log("Something went wrong", { error });
+    throw error;
+  }
+};
+
 export const CreateAccommodationImage = async (
   accommImages: FormData
 ): Promise<{ success: boolean }> => {
@@ -273,6 +304,65 @@ export const CreateRoomTypeAPI = async (
     });
 
     const data = await response.json();
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    console.log("Something went wrong", { error });
+    throw error;
+  }
+};
+
+export const EditRoomTypeAPI = async (
+  id: number,
+  body: RoomFormData
+): Promise<{
+  success: boolean;
+  message: string;
+  data: { id: number };
+}> => {
+  try {
+    const response = await fetch(`${base_url}/room-types/${id}/`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+   
+    const data = await response.json();
+    if (!response.ok) {
+      return data;
+    }
+
+    return data;
+  } catch (error) {
+    console.log("Something went wrong", { error });
+    throw error;
+  }
+};
+
+export const getRoomTypeAPI = async (
+  id: number
+): Promise<{
+  success: boolean;
+  message: string;
+  data: RoomType;
+}> => {
+  try {
+    const response = await fetch(`${base_url}/room-types/${id}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+
     if (!response.ok) {
       return data;
     }
