@@ -1,14 +1,13 @@
 "use client";
 
 import AddTourImages from "@/app/components/service/tour/addTourImages";
-import EditTourImages from "@/app/components/service/tour/editTourImages";
 import EditTourInformation from "@/app/components/service/tour/editTourInformation";
 import EditTourPlan from "@/app/components/service/tour/editTourPlan";
 import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
 import React, { useState } from "react";
 import { RiEditFill } from "react-icons/ri";
 
-const CreateCar = ({ params }: { params: { id: number } }) => {
+const EditTourPage = ({ params }: { params: { id: number } }) => {
   const { id } = params;
   const [active, setAcctive] = useState("edit tour information");
   const tabs = ["edit tour information", "edit tour plan", "edit tour images"];
@@ -39,4 +38,4 @@ const CreateCar = ({ params }: { params: { id: number } }) => {
   );
 };
 
-export default CreateCar;
+export default EditTourPage;

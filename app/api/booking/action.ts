@@ -34,7 +34,7 @@ export const getAllMyBookings = async (): Promise<BookingResponse> => {
 export const updateBookingStatus = async (
   id: number,
   newStatus: string
-): Promise<{ status: string; message: string }> => {
+): Promise<{ status: string; message: string; detail: string }> => {
   const accessToken = (await cookies()).get("accessToken")?.value;
   try {
     const response = await fetch(
@@ -48,7 +48,6 @@ export const updateBookingStatus = async (
       }
     );
     const data = await response.json();
-
     if (!response.ok) {
       return data;
     }
@@ -70,7 +69,7 @@ export const DeleteMyBooking = async (objectId: number): Promise<boolean> => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-   
+
     if (!response.ok) {
       return false;
     }

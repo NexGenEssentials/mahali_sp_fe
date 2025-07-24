@@ -24,7 +24,7 @@ export const getAllCountry = async (): Promise<CountryResponseType> => {
 
 export const CreateCountry = async (
   country: FormData
-): Promise<CountryResponseType> => {
+): Promise<{ success: boolean; data: { id: number }; detail: string }> => {
   try {
     const response = await fetch(`${base_url}/countries/`, {
       method: "POST",
@@ -35,12 +35,35 @@ export const CreateCountry = async (
     });
 
     const data = await response.json();
-
+    console.log(country, response, data);
     return data;
   } catch (error) {
     throw error;
   }
 };
+
+// export const CreateCountryImage = async (
+//   id: number,
+//   roomImage: FormData
+// ): Promise<{ success: boolean }> => {
+//   try {
+//     const response = await fetch(`${base_url}/countries/${id}/image`, {
+//       method: "POST",
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//       body: roomImage,
+//     });
+
+//     if (!response.ok) {
+//       return { success: false };
+//     }
+
+//     return { success: true };
+//   } catch (error) {
+//     return { success: false };
+//   }
+// };
 
 export const CreateHighlights = async (highLight: {
   title: string;

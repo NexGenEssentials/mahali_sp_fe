@@ -9,6 +9,7 @@ import { CountryType } from "@/app/types/service/tour";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { SquarePen } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const DestinationPage = () => {
   const [destinations, setDestinations] = useState<CountryType[]>([]);
@@ -16,7 +17,7 @@ const DestinationPage = () => {
   const [selectedDestination, setSelectedDestination] =
     useState<CountryType | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-
+  const router = useRouter();
   useEffect(() => {
     handleGetCountry();
   }, []);
@@ -55,6 +56,10 @@ const DestinationPage = () => {
     }
   };
 
+  const handleAssignHighlight = (id: number) => {
+    router.push(`/dashboard/destinations/assign/${id}`);
+  };
+
   const columns = [
     {
       title: "Image",
@@ -78,6 +83,13 @@ const DestinationPage = () => {
       key: "actions",
       render: (_: any, record: CountryType) => (
         <Space size="middle">
+          <button
+            onClick={() => handleAssignHighlight(record.id)}
+            className="text-indigo-600 hover:text-indigo-800 hover:underline duration-200 transition"
+            title="Assign highlight"
+          >
+            Assign highlight
+          </button>
           <Tooltip title="View Details">
             <EyeOutlined
               style={{ color: "#1890ff", cursor: "pointer" }}

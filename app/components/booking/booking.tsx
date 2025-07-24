@@ -55,11 +55,20 @@ function BookingsTable() {
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
       const result = await updateBookingStatus(id, newStatus);
-      notification.success({
-        message: result.message,
-        description: result.message,
-        placement: "topRight",
-      });
+     
+      if (result.status === "success") {
+        notification.success({
+          message: "Booking Status",
+          description: `Booking ${newStatus}ed Successfully`,
+          placement: "topRight",
+        });
+      } else {
+        notification.error({
+          message: "Booking Status",
+          description: result.detail,
+          placement: "topRight",
+        });
+      }
     } catch (error) {
       console.error("Error updating booking status:", error);
     } finally {
