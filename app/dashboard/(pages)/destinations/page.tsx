@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Modal, Spin, Tooltip, Space, message, Image } from "antd";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
-import { getAllCountry } from "@/app/api/destinations/action";
+import { DeleteCountry, getAllCountry } from "@/app/api/destinations/action";
 import { CountryType } from "@/app/types/service/tour";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -31,14 +31,19 @@ const DestinationPage = () => {
     message.info(`Edit destination: ${record.name}`);
   };
 
-  const handleDelete = (record: CountryType) => {
+  const handleDelete = async (record: CountryType) => {
     Modal.confirm({
       title: `Are you sure you want to delete "${record.name}"?`,
       okText: "Yes",
       cancelText: "No",
-      onOk: () => {
-        setDestinations((prev) => prev.filter((dest) => dest.id !== record.id));
-        message.success("Destination deleted");
+      onOk: async () => {
+        const result = await DeleteCountry(record.id);
+        if (result) {
+          setDestinations((prev) =>
+            prev.filter((dest) => dest.id !== record.id)
+          );
+          message.success("Destination deleted");
+        }
       },
     });
   };

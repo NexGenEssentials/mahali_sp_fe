@@ -12,18 +12,26 @@ import {
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import ServiceProviderTemplate from "@/app/dashboard/serviceProviderTemplate";
-import { DeleteUser, getUser, User } from "@/app/api/user/action";
+import {
+  ChangerUserRole,
+  DeleteUser,
+  getUser,
+  User,
+} from "@/app/api/user/action";
 
 const { Title } = Typography;
+const tabs = ["Users", "Agents"];
 
 const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [agents, setAgents] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 5,
     total: 0,
   });
+  const [active, setActive] = useState("Users");
 
   useEffect(() => {
     fetchUsers(pagination.current, pagination.pageSize);
@@ -33,16 +41,21 @@ const UsersPage = () => {
     setLoading(true);
     try {
       const result = await getUser();
+
       if (result.status === "success") {
         const customers = result.data.filter(
           (user: User) => user.role === "customer"
         );
+        const agentsList = result.data.filter(
+          (user: User) => user.role === "agent"
+        );
         setUsers(customers);
+        setAgents(agentsList);
         setPagination((prev) => ({
           ...prev,
           current: page,
           pageSize: pageSize,
-          total: customers.length,
+          total: active === "Users" ? customers.length : agentsList.length,
         }));
       }
     } catch (error) {
@@ -56,9 +69,14 @@ const UsersPage = () => {
     fetchUsers(pagination.current, pagination.pageSize);
   };
 
-  const handleView = (user: User) => {
-    message.info(`View user: ${user.full_name}`);
-    // You can redirect to a detail page or open a modal here
+  const handleView = async (user: User) => {
+    const result = await ChangerUserRole(user.id);
+    if (result.status === "success") {
+      message.info(`User Role changed successfully`);
+      fetchUsers(pagination.current, pagination.pageSize);
+    } else {
+      message.warning(`Something went wrong`);
+    }
   };
 
   const handleDelete = async (user: User) => {
@@ -76,7 +94,6 @@ const UsersPage = () => {
   const columns: ColumnsType<User> = [
     {
       title: "#",
-
       responsive: ["xs", "sm", "md", "lg"],
       render: (_: any, __: any, index: number) => <div>{index + 1}</div>,
     },
@@ -115,16 +132,20 @@ const UsersPage = () => {
     },
     {
       title: "Actions",
+      align: "center",
       key: "actions",
       render: (_text, record) => (
         <Space>
-          {/* <Button
-            type="link"
-            onClick={() => handleView(record)}
-            className="text-blue-600"
+          <Popconfirm
+            title="Are you sure you want to change this user's role?"
+            onConfirm={() => handleView(record)}
+            okText="Yes"
+            cancelText="No"
           >
-            View
-          </Button> */}
+            <Button type="link" className="text-green-600 hover:underline">
+              Change to Agent
+            </Button>
+          </Popconfirm>
           <Popconfirm
             title="Are you sure to delete this user?"
             onConfirm={() => handleDelete(record)}
@@ -143,20 +164,55 @@ const UsersPage = () => {
 
   return (
     <ServiceProviderTemplate>
-      <div className="p-6">
-        <Title level={3} className="mb-4">
-          Customer List
-        </Title>
-        <Table
-          columns={columns}
-          dataSource={users}
-          rowKey={(record) => record.id.toString()}
-          loading={loading}
-          pagination={pagination}
-          onChange={handleTableChange}
-          scroll={{ x: "max-content" }}
-        />
+      <div className="border-b border-gray-200  gap-8 flex items-center justify-center ">
+        {tabs.map((tab) => (
+          <div
+            onClick={() => setActive(tab)}
+            className={`${
+              active === tab
+                ? "font-bold text-gray-800 border-b-2 bg-primaryGreen/10 px-4 py-1 rounded-lg border-primaryGreen w-fit"
+                : "text-gray-400"
+            } cursor-pointer `}
+            key={tab}
+          >
+            {tab}
+          </div>
+        ))}
       </div>
+
+      {active === "Users" && (
+        <div className="p-6">
+          <Title level={3} className="mb-4">
+            Customer List
+          </Title>
+          <Table
+            columns={columns}
+            dataSource={users}
+            rowKey={(record) => record.id.toString()}
+            loading={loading}
+            pagination={pagination}
+            onChange={handleTableChange}
+            scroll={{ x: "max-content" }}
+          />
+        </div>
+      )}
+
+      {active === "Agents" && (
+        <div className="p-6">
+          <Title level={3} className="mb-4">
+            Agents List
+          </Title>
+          <Table
+            columns={columns}
+            dataSource={agents}
+            rowKey={(record) => record.id.toString()}
+            loading={loading}
+            pagination={pagination}
+            onChange={handleTableChange}
+            scroll={{ x: "max-content" }}
+          />
+        </div>
+      )}
     </ServiceProviderTemplate>
   );
 };

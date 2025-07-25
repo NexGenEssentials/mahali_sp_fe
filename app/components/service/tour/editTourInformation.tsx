@@ -73,6 +73,7 @@ const EditTourInformation = ({ id }: { id: number }) => {
 
   const onSubmit = async (data: EditTourPackageType) => {
     try {
+   
       const res = await EditTourPackage(data, id);
 
       if (res.success) {
@@ -165,6 +166,7 @@ const EditTourInformation = ({ id }: { id: number }) => {
                     valueAsNumber: true,
                   })}
                 />
+
                 <input
                   type="hidden"
                   value={item.type}

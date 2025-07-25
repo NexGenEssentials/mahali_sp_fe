@@ -51,6 +51,31 @@ export const getUser = async (): Promise<{
   }
 };
 
+export const ChangerUserRole = async (
+  id: number
+): Promise<{
+  status: string;
+  message: string;
+  data: User[];
+}> => {
+  try {
+    const response = await fetch(`${base_url}/users/${id}/promote-to-agent/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({}),
+    });
+   
+    const data = await response.json();
+   
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export type Message = {
   id: number;
   full_name: string;

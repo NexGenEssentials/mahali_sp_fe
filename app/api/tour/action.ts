@@ -349,7 +349,7 @@ export const EditTourPackage = async (
       },
       body: JSON.stringify(data),
     });
-
+    
     const result = await response.json();
 
     return result;
@@ -371,7 +371,6 @@ export const CreateTourPlans = async (
       },
       body: JSON.stringify(data),
     });
-
     const result = await response.json();
     if (!response.ok) {
       return { success: false };

@@ -35,7 +35,6 @@ export const CreateCountry = async (
     });
 
     const data = await response.json();
-    console.log(country, response, data);
     return data;
   } catch (error) {
     throw error;
@@ -109,6 +108,26 @@ export const CreateWheneToGo = async (season: {
 
     return data;
   } catch (error) {
+    throw error;
+  }
+};
+
+export const DeleteCountry = async (Id: number): Promise<boolean> => {
+  try {
+    const response = await fetch(`${base_url}/countries/${Id}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    if (!response.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.log("Something went wrong", { error });
     throw error;
   }
 };

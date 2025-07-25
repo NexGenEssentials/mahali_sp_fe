@@ -19,6 +19,11 @@ interface AccommodationTableProps {
   onUpdate: (id: number) => void;
   onView: (id: number, category: string) => void;
   loading: boolean;
+  totalPages: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+  startIndex: number;
+  endIndex: number;
 }
 
 const AccommodationTable: React.FC<AccommodationTableProps> = ({
@@ -27,14 +32,12 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
   onUpdate,
   onView,
   loading,
+  currentPage,
+  onPageChange,
+  totalPages,
+  endIndex,
+  startIndex,
 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = accom.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(accom.length / itemsPerPage);
   const route = useRouter();
 
   const renderRatingStars = (rating: number) => (
@@ -59,8 +62,8 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-x-auto">
-      <table className="divide-y divide-gray-200 text-sm text-left">
-        <thead className="bg-gray-100 sticky top-0 z-10">
+      <table className="divide-y divide-gray-200 text-sm text-left w-fit">
+        <thead className="bg-gray-100 w-full">
           <tr>
             {[
               "ID",
@@ -81,7 +84,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
             ].map((header, idx) => (
               <th
                 key={idx}
-                className="px-6 py-4 whitespace-nowrap border border-gray-200 bg-gray-50 font-medium text-gray-600 uppercase text-xs"
+                className=" px-6 py-4 whitespace-nowrap border border-gray-200 bg-gray-50 font-medium text-gray-600 uppercase text-xs"
               >
                 {header}
               </th>
@@ -96,12 +99,8 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
               </td>
             </tr>
           ) : (
-            [...currentItems]
-              .sort(
-                (a, b) =>
-                  new Date(b.created_at).getTime() -
-                  new Date(a.created_at).getTime()
-              )
+            [...accom]
+              .sort((a, b) => a.id - b.id)
               .map((a) => (
                 <tr key={a.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">{a.id}</td>
@@ -150,7 +149,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                       >
                         <Pencil className="w-4 h-4" />
                       </button>
-                     
+
                       <Popconfirm
                         title="Are you sure you want to delete this Accommodation?"
                         onConfirm={() => onDelete(a.id)}
@@ -185,7 +184,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
       <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
         <div className="flex-1 flex justify-between sm:hidden">
           <button
-            onClick={() => setCurrentPage(currentPage - 1)}
+            onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
             className={`relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${
               currentPage === 1
@@ -196,7 +195,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
             Previous
           </button>
           <button
-            onClick={() => setCurrentPage(currentPage + 1)}
+            onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             className={`relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md ${
               currentPage === totalPages
@@ -223,7 +222,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
               aria-label="Pagination"
             >
               <button
-                onClick={() => setCurrentPage(currentPage - 1)}
+                onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
                   currentPage === 1
@@ -237,7 +236,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
               {[...Array(totalPages)].map((_, index) => (
                 <button
                   key={index + 1}
-                  onClick={() => setCurrentPage(index + 1)}
+                  onClick={() => onPageChange(index + 1)}
                   className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                     currentPage === index + 1
                       ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
@@ -248,7 +247,7 @@ const AccommodationTable: React.FC<AccommodationTableProps> = ({
                 </button>
               ))}
               <button
-                onClick={() => setCurrentPage(currentPage + 1)}
+                onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
                   currentPage === totalPages
