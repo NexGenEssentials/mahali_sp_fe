@@ -162,6 +162,77 @@ const UsersPage = () => {
     },
   ];
 
+  const agentcolumns: ColumnsType<User> = [
+    {
+      title: "#",
+      responsive: ["xs", "sm", "md", "lg"],
+      render: (_: any, __: any, index: number) => <div>{index + 1}</div>,
+    },
+    {
+      title: "Full Name",
+      dataIndex: "full_name",
+      key: "full_name",
+      responsive: ["xs", "sm", "md", "lg"],
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      responsive: ["md", "lg"],
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+      responsive: ["md", "lg"],
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      render: (role: string) => {
+        let color =
+          role === "admin"
+            ? "red"
+            : role === "service_provider"
+            ? "blue"
+            : "green";
+        return <Tag color={color}>{role.toUpperCase()}</Tag>;
+      },
+      responsive: ["xs", "sm", "md", "lg"],
+    },
+    {
+      title: "Actions",
+      align: "center",
+      key: "actions",
+      render: (_text, record) => (
+        <Space>
+          <Popconfirm
+            title="Are you sure you want to change this user's role?"
+            onConfirm={() => handleView(record)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="link" className="text-red-600 hover:underline">
+              Revoke Agent
+            </Button>
+          </Popconfirm>
+          <Popconfirm
+            title="Are you sure to delete this user?"
+            onConfirm={() => handleDelete(record)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger type="link">
+              Delete
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+      responsive: ["xs", "sm", "md", "lg"],
+    },
+  ];
+
   return (
     <ServiceProviderTemplate>
       <div className="border-b border-gray-200  gap-8 flex items-center justify-center ">
@@ -203,7 +274,7 @@ const UsersPage = () => {
             Agents List
           </Title>
           <Table
-            columns={columns}
+            columns={agentcolumns}
             dataSource={agents}
             rowKey={(record) => record.id.toString()}
             loading={loading}

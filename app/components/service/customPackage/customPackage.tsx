@@ -124,7 +124,7 @@ const CustomPackage = () => {
           </div>
         ) : (
           <>
-            <div className="flex gap-4 flex-wrap items-stretch justify-evenly">
+            <div className="flex gap-4 flex-wrap items-stretch justify-start">
               {paginatedData.map((pack) => (
                 <CustomPackageCard
                   key={pack.id}
