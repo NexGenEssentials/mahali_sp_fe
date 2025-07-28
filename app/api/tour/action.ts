@@ -349,7 +349,7 @@ export const EditTourPackage = async (
       },
       body: JSON.stringify(data),
     });
-    
+
     const result = await response.json();
 
     return result;

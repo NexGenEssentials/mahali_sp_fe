@@ -41,7 +41,13 @@ export default function TourForm() {
   const [id, setId] = useState<number>(0);
   const [data, setData] = useState<TourFormSchema>({
     title: "",
-    prices: [],
+    prices: [
+      { nationality_type: "RWANDA", price: 0 },
+      { nationality_type: "EAST_AFRICA", price: 0 },
+      { nationality_type: "FOREIGN_RESIDENCE_RW", price: 0 },
+      { nationality_type: "AFRICAN", price: 0 },
+      { nationality_type: "INTERNATIONAL", price: 0 },
+    ],
     description: "",
     location: "",
     best_time_to_visit: "",

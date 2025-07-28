@@ -2,16 +2,22 @@
 
 import { EditTourPackage, getSingleTour } from "@/app/api/tour/action";
 import { CountryType, EditTourPackageType } from "@/app/types/service/tour";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { tourFormSchema } from "./createTourForm";
 import { getAllCountry } from "@/app/api/destinations/action";
 import message from "antd/es/message";
 import Loader from "../../skeleton/loader";
 import { Input } from "../../form/inputField";
+
+const defaultPrices = [
+  { nationality_type: "RWANDA", price: 0 },
+  { nationality_type: "EAST_AFRICA", price: 0 },
+  { nationality_type: "FOREIGN_RESIDENCE_RW", price: 0 },
+  { nationality_type: "AFRICAN", price: 0 },
+  { nationality_type: "INTERNATIONAL", price: 0 },
+];
 
 const EditTourInformation = ({ id }: { id: number }) => {
   const [loading, setLoading] = useState(true);
@@ -25,6 +31,15 @@ const EditTourInformation = ({ id }: { id: number }) => {
     formState: { errors, isSubmitting },
   } = useForm<EditTourPackageType>({
     mode: "onTouched",
+    defaultValues: {
+      prices: [
+        { nationality_type: "RWANDA", price: 0 },
+        { nationality_type: "EAST_AFRICA", price: 0 },
+        { nationality_type: "FOREIGN_RESIDENCE_RW", price: 0 },
+        { nationality_type: "AFRICAN", price: 0 },
+        { nationality_type: "INTERNATIONAL", price: 0 },
+      ],
+    },
   });
 
   useEffect(() => {
@@ -47,9 +62,10 @@ const EditTourInformation = ({ id }: { id: number }) => {
           min_people: tour.min_people,
           max_people: tour.max_people,
           rating: tour.rating,
-          prices: tour.prices,
+          prices: tour.prices.length <= 0 ? defaultPrices : tour.prices,
           is_active: tour.is_active,
-          country: tour.country,
+          tour_plans: tour.tour_plans,
+          country_id: tour.country,
         });
       }
     } catch (error) {
@@ -72,14 +88,14 @@ const EditTourInformation = ({ id }: { id: number }) => {
   };
 
   const onSubmit = async (data: EditTourPackageType) => {
-    try {
    
+    try {
       const res = await EditTourPackage(data, id);
 
       if (res.success) {
         reset();
         message.success("Tour updated successfully!");
-        router.push("/dashboard/tours");
+        router.push("/dashboard/service");
       } else {
         message.error("Failed to update tour.");
       }
@@ -200,7 +216,7 @@ const EditTourInformation = ({ id }: { id: number }) => {
             Country
           </label>
           <select
-            {...register("country")}
+            {...register("country_id")}
             className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200"
           >
             <option value="">Select Country</option>
@@ -210,9 +226,9 @@ const EditTourInformation = ({ id }: { id: number }) => {
               </option>
             ))}
           </select>
-          {errors.country && (
+          {errors.country_id && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.country.message}
+              {errors.country_id.message}
             </p>
           )}
         </div>
