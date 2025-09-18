@@ -9,6 +9,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { useRouter } from "next/navigation";
 
 export default function AddVehicleForm() {
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [formData, setFormData] = useState<CarDetails>({
     owner: 0,
     name: "",
@@ -30,7 +31,6 @@ export default function AddVehicleForm() {
   const [step, setStep] = useState(1);
   const [carId, setCarId] = useState(1);
   const router = useRouter();
-
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -54,22 +54,64 @@ export default function AddVehicleForm() {
     }));
   };
 
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!formData.name.trim()) newErrors.name = "Vehicle name is required.";
+    if (!formData.brand) newErrors.brand = "Brand is required.";
+    if (!formData.category) newErrors.category = "Category is required.";
+    if (!formData.location.trim()) newErrors.location = "Location is required.";
+
+    if (!formData.year) {
+      newErrors.year = "Year is required.";
+    } else {
+      const yearNum = parseInt(formData.year as string, 10);
+      const currentYear = new Date().getFullYear();
+      if (yearNum < 1900 || yearNum > currentYear + 1) {
+        newErrors.year = "Enter a valid year.";
+      }
+    }
+
+    if (formData.mileage < 0) newErrors.mileage = "Mileage cannot be negative.";
+
+    if (!formData.price_per_day || isNaN(Number(formData.price_per_day))) {
+      newErrors.price_per_day = "Enter a valid price per day.";
+    }
+
+    if (formData.seats < 1)
+      newErrors.seats = "Vehicle must have at least 1 seat.";
+
+    if (formData.description.length < 10) {
+      newErrors.description = "Description must be at least 10 characters.";
+    }
+
+    return newErrors;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
     setLoading(true);
+
     try {
       const result = await CreateCar(formData);
-
       if (result.status === "success") {
         setCarId(result.data.id);
         setStep(2);
         message.success("Car created successfully");
-      }
-      if (!result.status) {
-        message.error("Failed to create car check the details");
+      } else {
+        message.error("Failed to create car, please check the details.");
       }
     } catch (error) {
       console.error("Error creating car:", error);
+      message.error("Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -115,8 +157,11 @@ export default function AddVehicleForm() {
                   placeholder="e.g. Camry XLE"
                   value={formData.name}
                   onChange={handleChange}
-                  className="input"
+                  className={`input ${errors.name ? "border-red-500" : ""}`}
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                )}
               </div>
 
               {/* Brand Input */}
@@ -132,7 +177,7 @@ export default function AddVehicleForm() {
                   name="brand"
                   value={formData.brand}
                   onChange={handleChange}
-                  className="input"
+                  className={`input ${errors.brand ? "border-red-500" : ""}`}
                 >
                   <option value="" disabled>
                     Select a brand
@@ -143,10 +188,12 @@ export default function AddVehicleForm() {
                     </option>
                   ))}
                 </select>
+                {errors.brand && (
+                  <p className="text-red-500 text-sm mt-1">{errors.brand}</p>
+                )}
               </div>
 
               {/* Category Select */}
-
               <div>
                 <label
                   htmlFor="category"
@@ -159,7 +206,7 @@ export default function AddVehicleForm() {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className="input"
+                  className={`input ${errors.category ? "border-red-500" : ""}`}
                 >
                   <option value="" disabled>
                     Select a category
@@ -171,30 +218,37 @@ export default function AddVehicleForm() {
                     </option>
                   ))}
                 </select>
+                {errors.category && (
+                  <p className="text-red-500 text-sm mt-1">{errors.category}</p>
+                )}
               </div>
+
               {/* location */}
               <div>
                 <label
                   htmlFor="location"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  location
+                  Location
                 </label>
                 <input
                   name="location"
                   type="string"
                   value={formData.location}
                   onChange={handleChange}
-                  className="input"
+                  className={`input ${errors.location ? "border-red-500" : ""}`}
                   placeholder="Enter vehicle location"
                 />
+                {errors.location && (
+                  <p className="text-red-500 text-sm mt-1">{errors.location}</p>
+                )}
               </div>
-
-              
             </div>
-            <>
+
+            {/* Description */}
+            <div>
               <label
-                htmlFor="descritpion"
+                htmlFor="description"
                 className="block text-sm font-medium text-gray-700"
               >
                 Description
@@ -204,10 +258,17 @@ export default function AddVehicleForm() {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Enter vehicle description"
-                className="input"
+                className={`input ${
+                  errors.description ? "border-red-500" : ""
+                }`}
                 rows={3}
               />
-            </>
+              {errors.description && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.description}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Specifications */}
@@ -230,9 +291,12 @@ export default function AddVehicleForm() {
                   type="number"
                   value={formData.year}
                   onChange={handleChange}
-                  className="input"
+                  className={`input ${errors.year ? "border-red-500" : ""}`}
                   placeholder="e.g. 2023"
                 />
+                {errors.year && (
+                  <p className="text-red-500 text-sm mt-1">{errors.year}</p>
+                )}
               </div>
 
               {/* Mileage Input */}
@@ -249,9 +313,12 @@ export default function AddVehicleForm() {
                   type="number"
                   value={formData.mileage}
                   onChange={handleChange}
-                  className="input"
+                  className={`input ${errors.mileage ? "border-red-500" : ""}`}
                   placeholder="e.g. 15000"
                 />
+                {errors.mileage && (
+                  <p className="text-red-500 text-sm mt-1">{errors.mileage}</p>
+                )}
               </div>
 
               {/* Fuel Type Select */}
@@ -316,9 +383,12 @@ export default function AddVehicleForm() {
                   type="number"
                   value={formData.seats}
                   onChange={handleChange}
-                  className="input"
+                  className={`input ${errors.seats ? "border-red-500" : ""}`}
                   placeholder="e.g. 5"
                 />
+                {errors.seats && (
+                  <p className="text-red-500 text-sm mt-1">{errors.seats}</p>
+                )}
               </div>
 
               {/* Luggage Capacity Input */}
@@ -348,7 +418,7 @@ export default function AddVehicleForm() {
               Pricing & Availability
             </h3>
             <div className="grid grid-cols-1 items-start md:grid-cols-2 gap-4">
-              <div className="">
+              <div>
                 <label
                   htmlFor="price_per_day"
                   className="block text-sm font-medium text-gray-700"
@@ -359,10 +429,18 @@ export default function AddVehicleForm() {
                   name="price_per_day"
                   value={formData.price_per_day}
                   onChange={handleChange}
-                  className="input"
+                  className={`input ${
+                    errors.price_per_day ? "border-red-500" : ""
+                  }`}
                   placeholder="0.00"
                 />
+                {errors.price_per_day && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.price_per_day}
+                  </p>
+                )}
               </div>
+
               <div className="flex items-center justify-between gap-2 border p-2 rounded-md">
                 <div>
                   <span className="flex items-center gap-2">

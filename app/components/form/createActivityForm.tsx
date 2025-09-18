@@ -103,7 +103,7 @@ const CreateTourActivityForm = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-2xl min-w-[400px] mx-auto p-6 bg-white "
+      className="max-w-2xl min-w-[400px] mx-auto p-6 bg-white overflow-y-scroll h-[80vh] "
     >
       <h2 className="text-2xl font-bold mb-4 text-center">
         Create Tour Activity

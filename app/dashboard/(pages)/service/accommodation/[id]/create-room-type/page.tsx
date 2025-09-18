@@ -85,6 +85,7 @@ const CreateRoomType: React.FC<CreateRoomTypeProps> = ({ params }) => {
     "King Bed",
     "Sofa Bed",
     "Bunk Bed",
+    "Triple Bed"
   ];
 
   const onSubmit = async (data: RoomFormData) => {
